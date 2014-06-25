@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <title>throw new Error("Chief") - I complain about JavaScript, Angular, Sails and other interwebs stuff</title>
+        <meta name="description" content="JavaScript, Sails, Node, Angular, Christopher Najewicz, chief" />
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" type="text/css" href="/assets/css/normalize.css" />
+        <link rel="stylesheet" type="text/css" href="/assets/css/screen.css" />
+        <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
+        <!-- This is for syntax highlight -->
+        <link rel="stylesheet" type="text/css" href="/assets/css/syntax.css">
+        <!-- Customisation  -->
+        <link rel="stylesheet" type="text/css" href="/assets/css/main.css" />
+    </head>
+    <body class="home-template">
+        <main class="content" role="main">
+
+    <article class="post">
+        <header class="post-header">
+            <a id="blog-logo" href="">
+                
+                    <span class="blog-title">throw new Error("Chief")</span>
+                 
+            </a>
+        </header>
+        
+        <span class="post-meta">
+        	<time datetime="2014-06-24">24 Jun 2014</time>
+        	
+       	</span>
+
+        <h1 class="post-title">Easily create Angular-based frontend scaffolding for Sails</h1>
+
+        <section class="post-content">
+            <p>SailsJS 0.10 introduces the concept of generators, a layer to allow users to create their own templates around the various pieces of a SailsJS project. One of the generators, sails-generate-frontend will generate all your front-end assets. I have created sails-generate-frontend-angular, a generator to override the default frontend generator and create a simple scaffold for an Angular frontend.</p>
+
+<p>The first thing you will need to do is make sure to install Sails release-candidate 0.10.x.</p>
+
+<div class="highlight"><pre><code class="bash"><span class="nv">$ </span>npm install -g sails@beta</code></pre></div>
+
+<p>Install sails-generate-frontend-angular.</p>
+
+<div class="highlight"><pre><code class="bash"><span class="nv">$ </span>npm install -g sails-generate-frontend-angular</code></pre></div>
+
+<p>The best way to use this generator is to have it kick off as part of Sails&#39; <code>generate-new</code> generator which runs when you execute <code>sails new &lt;appName&gt;</code>. In order for Sails to recognize this generator, we must modify our <code>.sailsrc</code> file.</p>
+
+<div class="highlight"><pre><code class="bash"><span class="nv">$ </span><span class="nb">cd</span> ~ <span class="o">&amp;&amp;</span> vim .sailsrc</code></pre></div>
+
+<div class="highlight"><pre><code class="json"><span class="lineno">1</span> <span class="p">{</span>
+<span class="lineno">2</span>     <span class="nt">&quot;generators&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="lineno">3</span>         <span class="nt">&quot;modules&quot;</span> <span class="p">:</span> <span class="p">{</span>
+<span class="lineno">4</span>             <span class="nt">&quot;frontend&quot;</span> <span class="p">:</span> <span class="s2">&quot;sails-generate-frontend-angular&quot;</span>
+<span class="lineno">5</span>         <span class="p">}</span>
+<span class="lineno">6</span>     <span class="p">}</span>
+<span class="lineno">7</span> <span class="p">}</span></code></pre></div>
+
+<p>After you have saved your <code>.sailsrc</code> file to your home directory, create a new sails project and fire it up! Open up your favorite web browser and go to <code>http://localhost:1337/</code></p>
+
+<div class="highlight"><pre><code class="bash"><span class="nv">$ </span>sails new ngSailsApp <span class="o">&amp;&amp;</span> <span class="nb">cd </span>ngSailsApp <span class="o">&amp;&amp;</span> sails lift</code></pre></div>
+
+<p><img src="/assets/images/sails-generate-frontend-angular/new_app_screenshot.jpg" alt="Screenshot"></p>
+
+<p>Exit your Sails app with <code>ctrl-c</code>. Now generate an api. For this example, we&#39;ll generate an api around a movie class.</p>
+
+<div class="highlight"><pre><code class="bash"><span class="nv">$ </span>sails generate api movie
+
+info: Created a new model <span class="o">(</span><span class="s2">&quot;Movie&quot;</span><span class="o">)</span> at api/models/Movie.js!
+info: Created a new controller <span class="o">(</span><span class="s2">&quot;movie&quot;</span><span class="o">)</span> at api/controllers/MovieController.js!
+
+info: REST API generated @ http://localhost:1337/movie
+info: and will be available the next <span class="nb">time </span>you run <span class="sb">`</span>sails lift<span class="sb">`</span>.</code></pre></div>
+
+<p>Modify your generated model file (in <code>api/models/Movie.js</code>) to add some attributes.</p>
+
+<div class="highlight"><pre><code class="js"><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">attributes</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
+    <span class="nx">year</span><span class="o">:</span> <span class="s1">&#39;integer&#39;</span><span class="p">,</span>
+    <span class="nx">genre</span><span class="o">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
+    <span class="nx">rating</span><span class="o">:</span> <span class="s1">&#39;integer&#39;</span>
+  <span class="p">}</span>
+<span class="p">};</span></code></pre></div>
+
+<p>Once again, fire up the Sails app with <code>sails lift</code>, and open a browser to <code>http://localhost:1337/#/movies</code>. Here you will see a very, very, very unstyled, basic CRUD scaffold built with <a href="http://sailsjs.org/">Sails</a>, <a href="https://angularjs.org/">Angular</a>, <a href="https://github.com/mgonto/restangular/">RESTAngular</a>, and <a href="http://angular-ui.github.io/ui-router/site/#/api/ui.router">ui-router</a>.</p>
+
+<p><img src="/assets/images/sails-generate-frontend-angular/new_movie_crud.gif" alt="CRUD Movie Example"></p>
+
+<p>Please feel free to check out the <a href="https://github.com/chiefy/sails-generate-frontend-angular">code on github</a> and make any suggestions you feel would improve the project.</p>
+
+<p><a href="https://github.com/chiefy/sails-generate-frontend-angular" class="github-button" data-style="mega" data-icon="octicon-star" data-count-href="/chiefy/sails-generate-frontend-angular#stargazers" data-count-api="/repos/chiefy/sails-generate-frontend-angular#stargazers_count"> Star </a>
+<a href="https://github.com/chiefy/" class="github-button" data-style="mega" data-icon="octicon-mark-github" data-count-href="/chiefy/followers" data-count-api="/users/chiefy#followers"> Follow chiefy </a>
+<a href="https://github.com/chiefy/sails-generate-frontend-angular" class="github-button" data-style="mega" data-icon="octicon-git-branch" > Fork </a></p>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+        	<!-- If we want to display author's name and bio -->
+            
+                <section class="author">
+                	<header> <a href=""> <img class="profile" src="/assets/images/chief_is_dangerous.jpg" alt="Author's an idiot."></a></header>
+                	<article>
+                		<!-- Author Name -->
+                    	<h4> Christopher "Chief" Najewicz </h4>
+                    	<!-- Author Bio -->
+                    	<p> 
+                    		My name is chief. I like to do the javascripts, and "web development." Feel free to follow my antics: <a href="http://twitter.com/tehsuck">@tehsuck</a>.
+                    	</p>
+                    </article>
+                </section>                
+            
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="http://twitter.com/share?text=Easily create Angular-based frontend scaffolding for Sails&amp;url=https://chiefy.github.io/2014/06/24/using-sails-generate-frontend-angular.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://chiefy.github.io/2014/06/24/using-sails-generate-frontend-angular.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=https://chiefy.github.io/2014/06/24/using-sails-generate-frontend-angular.html"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+            
+            
+            <section class="disqus">
+            	<div id="disqus_thread"></div>
+            	<script type="text/javascript">
+
+            	    var disqus_shortname = 'chiefy'; 
+            		var disqus_developer = 0; // developer mode is on
+            	    (function() {
+            	        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            	        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            	        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            	    })();
+            	</script>
+            	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+            	<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+            </section>
+            
+        	
+        </footer>
+
+    </article>
+
+</main>
+
+        <footer class="site-footer">
+            <a class="subscribe icon-feed" href="rss.xml"><span class="tooltip">Subscribe!</span></a>
+            <div class="inner">
+                <section class="copyright">All content copyright <a href="">throw new Error("Chief")</a> &copy;  &bull; All rights reserved.</section>
+            </div>
+        </footer>
+        <script type="text/javascript" src="/assets/js/jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+        <script type="text/javascript" src="/assets/js/index.js"></script>
+        <script async defer id="github-bjs" src="//buttons.github.io/buttons.js"></script>
+    </body>
+</html>

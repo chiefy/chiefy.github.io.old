@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+  xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/">
+  <channel>
+    <title>throw new Error(&quot;Chief&quot;)</title>
+    <link>https://chiefy.github.io</link>
+    <description>I complain about JavaScript, Angular, Sails and other interwebs stuff</description>
+    <pubDate>Tue, 24 Jun 2014 01:00:00 -0400</pubDate>
+    <item>
+      <title>Easily create Angular-based frontend scaffolding for Sails</title>
+      <link>https://chiefy.github.io/2014/06/24/using-sails-generate-frontend-angular.html</link>
+      <description>&lt;p&gt;SailsJS 0.10 introduces the concept of generators, a layer to allow users to create their own templates around the various pieces of a SailsJS project. One of the generators, sails-generate-frontend will generate all your front-end assets. I have created sails-generate-frontend-angular, a generator to override the default frontend generator and create a simple scaffold for an Angular frontend.&lt;/p&gt;
+</description>
+      <pubDate>Tue, 24 Jun 2014 01:00:00 -0400</pubDate>
+      <guid>https://chiefy.github.io/2014/06/24/using-sails-generate-frontend-angular.html</guid>
+      <dc:date>2014-06-24T01:00:00-04:00</dc:date>
+    </item>
+    <item>
+      <title>Using generators in SailsJS 0.10.x</title>
+      <link>https://chiefy.github.io/2014/04/13/using-generators-in-sailsjs-010.html</link>
+      <description>&lt;p&gt;Sails&amp;#39; new &lt;a href=&quot;https://github.com/balderdashy/sails/tree/v0.10.0-rc5&quot;&gt;release candidate&lt;/a&gt; is a pretty big shift from the 0.9 version, and in a good way.&lt;/p&gt;
+</description>
+      <pubDate>Sun, 13 Apr 2014 12:59:27 -0400</pubDate>
+      <guid>https://chiefy.github.io/2014/04/13/using-generators-in-sailsjs-010.html</guid>
+      <dc:date>2014-04-13T12:59:27-04:00</dc:date>
+    </item>
+    <dc:date>2014-06-24T01:00:00-04:00</dc:date>
+  </channel>
+</rss>
