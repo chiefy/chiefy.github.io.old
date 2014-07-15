@@ -7,7 +7,7 @@
     <atom:link href="https://chiefy.github.io/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
-        <title>Using SQLite and Sequlize with ActionHero</title>
+        <title>Using SQLite and Sequelize with ActionHero</title>
         <description>&lt;p&gt;This past weekend I was checking out &lt;a href=&quot;http://actionherojs.com/&quot;&gt;ActionHero&lt;/a&gt;, a pretty nice API framework written in Node.js which claims to be: &amp;quot;Reusable, Scalable, and Quick!&amp;quot; I was setting up a quick example and I didn&amp;#39;t want to have to connect to a MySQL or Postgres DB. ActionHero comes with &lt;code&gt;fakeredis&lt;/code&gt;, an in-memory pseudo-redis store, which is great for experimenting but I wanted to use a local disk store. A few google searches didn&amp;#39;t turn up too much on how to use SQLite with ActionHero, so here we go.&lt;/p&gt;
 
 &lt;h3&gt;pre-req&amp;#39;s:&lt;/h3&gt;
