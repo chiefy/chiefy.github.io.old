@@ -8,7 +8,16 @@
     <title>throw new Error(&quot;Chief&quot;)</title>
     <link>https://chiefy.github.io</link>
     <description>I complain about JavaScript, Angular, Sails and other interwebs stuff</description>
-    <pubDate>Tue, 24 Jun 2014 01:00:00 -0400</pubDate>
+    <pubDate>Sun, 13 Jul 2014 12:59:27 -0400</pubDate>
+    <item>
+      <title>Using SQLite and Sequlize with ActionHero</title>
+      <link>https://chiefy.github.io/2014/07/13/using-sqlite-sequelize-with-actionhero.html</link>
+      <description>&lt;p&gt;This past weekend I was checking out &lt;a href=&quot;http://actionherojs.com/&quot;&gt;ActionHero&lt;/a&gt;, a pretty nice API framework written in Node.js which claims to be: &amp;quot;Reusable, Scalable, and Quick!&amp;quot; I was setting up a quick example and I didn&amp;#39;t want to have to connect to a MySQL or Postgres DB. ActionHero comes with &lt;code&gt;fakeredis&lt;/code&gt;, an in-memory pseudo-redis store, which is great for experimenting but I wanted to use a local disk store. A few google searches didn&amp;#39;t turn up too much on how to use SQLite with ActionHero, so here we go.&lt;/p&gt;
+</description>
+      <pubDate>Sun, 13 Jul 2014 12:59:27 -0400</pubDate>
+      <guid>https://chiefy.github.io/2014/07/13/using-sqlite-sequelize-with-actionhero.html</guid>
+      <dc:date>2014-07-13T12:59:27-04:00</dc:date>
+    </item>
     <item>
       <title>Easily create Angular-based frontend scaffolding for Sails</title>
       <link>https://chiefy.github.io/2014/06/24/using-sails-generate-frontend-angular.html</link>
@@ -27,6 +36,6 @@
       <guid>https://chiefy.github.io/2014/04/13/using-generators-in-sailsjs-010.html</guid>
       <dc:date>2014-04-13T12:59:27-04:00</dc:date>
     </item>
-    <dc:date>2014-06-24T01:00:00-04:00</dc:date>
+    <dc:date>2014-07-13T12:59:27-04:00</dc:date>
   </channel>
 </rss>

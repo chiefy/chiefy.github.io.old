@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <title>throw new Error("Chief") - I complain about JavaScript, Angular, Sails and other interwebs stuff</title>
+        <meta name="description" content="JavaScript, Sails, Node, Angular, Christopher Najewicz, chief" />
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" type="text/css" href="/assets/css/normalize.css" />
+        <link rel="stylesheet" type="text/css" href="/assets/css/screen.css" />
+        <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
+        <!-- This is for syntax highlight -->
+        <link rel="stylesheet" type="text/css" href="/assets/css/syntax.css">
+        <!-- Customisation  -->
+        <link rel="stylesheet" type="text/css" href="/assets/css/main.css" />
+    </head>
+    <body class="home-template">
+        <main class="content" role="main">
+
+    <article class="post">
+        <header class="post-header">
+            <a id="blog-logo" href="">
+                
+                    <span class="blog-title">throw new Error("Chief")</span>
+                 
+            </a>
+        </header>
+        
+        <span class="post-meta">
+        	<time datetime="2014-07-13">13 Jul 2014</time>
+        	
+       	</span>
+
+        <h1 class="post-title">Using SQLite and Sequlize with ActionHero</h1>
+
+        <section class="post-content">
+            <p>This past weekend I was checking out <a href="http://actionherojs.com/">ActionHero</a>, a pretty nice API framework written in Node.js which claims to be: &quot;Reusable, Scalable, and Quick!&quot; I was setting up a quick example and I didn&#39;t want to have to connect to a MySQL or Postgres DB. ActionHero comes with <code>fakeredis</code>, an in-memory pseudo-redis store, which is great for experimenting but I wanted to use a local disk store. A few google searches didn&#39;t turn up too much on how to use SQLite with ActionHero, so here we go.</p>
+
+<h3>pre-req&#39;s:</h3>
+
+<ul>
+<li><a href="http://nodejs.org/">Node.js</a> (v0.10.x)</li>
+<li><a href="http://sqlite.org/">SQLite</a></li>
+<li>If you like to GUI, A SQLite GUI (such as <a href="http://sqlitebrowser.org/">SQLite Browser</a>)</li>
+</ul>
+
+<h3>Install ActionHero</h3>
+
+<div class="highlight"><pre><code class="bash"><span class="nv">$ </span>npm install -g actionhero</code></pre></div>
+
+<h3>Create a new project</h3>
+
+<div class="highlight"><pre><code class="bash"><span class="nv">$ </span><span class="nb">cd</span> ~ <span class="o">&amp;&amp;</span> mkdir meatr <span class="o">&amp;&amp;</span> <span class="nb">cd</span> <span class="nv">$_</span> <span class="o">&amp;&amp;</span> actionhero generate</code></pre></div>
+
+<p>This will scaffold a new ActionHero project. At this point you can run <code>npm start</code> and you can visit <code>http://localhost:8080</code> to see some basic info about your ActionHero API.</p>
+
+<h3>Add dependencies</h3>
+
+<p>Next, we will need to add some dependencies to our project. We are going to install <code>sqlite3</code> for SQLite support and <a href="http://sequelizejs.com/">Sequelize</a> which is an ORM designed to abstract away your DB boilerplate code. Sequelize works with SQLite, MySQL and Postgres as of this writing. For quick prototyping it might be worth starting with a small/local store like SQLite and then moving to MySQL or Postgres when you have to start thinking about scaling / performance issues. Also there are some features that MySQL and Postgres include that SQLite won&#39;t (and can&#39;t) ever support.</p>
+
+<div class="highlight"><pre><code class="bash"><span class="nv">$ </span>npm install --save sqlite3 sequelize</code></pre></div>
+
+<h3>Create a config</h3>
+
+<p>Although we&#39;re just going to be using a simple SQLite flat-file database, let&#39;s make a configuration for any parameters we&#39;ll need to send along.</p>
+
+<div class="highlight"><pre><code class="js"><span class="c1">// config/sqlite.js</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="k">default</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">sqlite</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">api</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="nx">storage</span><span class="o">:</span> <span class="nx">__dirname</span> <span class="o">+</span> <span class="s1">&#39;/../store/app.sqlite&#39;</span><span class="p">,</span>
+            <span class="nx">dialect</span><span class="o">:</span> <span class="s1">&#39;sqlite&#39;</span>  
+        <span class="p">};</span>
+    <span class="p">}</span>
+<span class="p">};</span></code></pre></div>
+
+<p>All we are doing here is attaching a new function to ActionHero&#39;s default configuration. The function gets injected with the root ActionHero object <code>api</code>, but we don&#39;t really need to worry about that here. We simply return an object with two keys: <code>storage</code> &amp; <code>dialect</code>. <code>storage</code> will tell Sequelize where the file store is located. <code>dialect</code> informs Sequelize what type of store we are using, in this case it&#39;s a SQLite file store. If you were going to use MySQL or Postgres, you could include other configuration properties here such as <code>username</code>,<code>password</code>,<code>port</code>,<code>hostname</code>, etc.</p>
+
+<h3>Let&#39;s initialize!</h3>
+
+<p>ActionHero has <a href="http://actionherojs.com/docs/core/initializers.html">the concept of <code>Initializers</code></a> which bootstrap configurations before the API initially starts. We need to expose an API to setup our data store. ActionHero provides a handy command line interface to scaffold certain elements of the project.</p>
+
+<div class="highlight"><pre><code class="bash"><span class="nv">$ </span>actionhero generateInitializer --name<span class="o">=</span><span class="s2">&quot;sqlite&quot;</span>
+info: actionhero &gt;&gt; generateInitializer
+info:  - wrote file <span class="s1">&#39;C:\Users\cnajewicz\Documents\meatr\initializers\sqlite.js&#39;</span></code></pre></div>
+
+<p>This creates a new file at <code>initializers/sqlite.js</code> with some stubbed methods:</p>
+
+<div class="highlight"><pre><code class="js"><span class="c1">// initializers/sqlite.js</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">sqlite</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">api</span><span class="p">,</span> <span class="nx">next</span><span class="p">){</span>
+
+  <span class="nx">api</span><span class="p">.</span><span class="nx">sqlite</span> <span class="o">=</span> <span class="p">{};</span>
+
+  <span class="nx">api</span><span class="p">.</span><span class="nx">sqlite</span><span class="p">.</span><span class="nx">_start</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">api</span><span class="p">,</span> <span class="nx">next</span><span class="p">){</span>
+    <span class="nx">next</span><span class="p">();</span>
+  <span class="p">};</span>
+
+  <span class="nx">api</span><span class="p">.</span><span class="nx">sqlite</span><span class="p">.</span><span class="nx">_stop</span> <span class="o">=</span>  <span class="kd">function</span><span class="p">(</span><span class="nx">api</span><span class="p">,</span> <span class="nx">next</span><span class="p">){</span>
+    <span class="nx">next</span><span class="p">();</span>
+  <span class="p">};</span>
+
+  <span class="nx">next</span><span class="p">();</span>
+<span class="p">}</span></code></pre></div>
+
+<p>Our module here exports a function which is injected with the root ActionHero object <code>api</code> and a callback function, <code>next</code>. If you&#39;ve never used frameworks like <code>express.js</code>, the <code>next</code> callback is used to progress through the next &quot;task&quot; on the stack to run. If you are doing anything asynchronus, make sure not to execute <code>next</code> until your promise is resolved or rejected.</p>
+
+<p>ActionHero has several pre-defined hooks: <code>_start</code> and <code>_stop</code> run exactly when you think they would. We&#39;ll be focusing on the <code>_start</code> method to setup our data store and models. We&#39;ll be creating a new instance of <code>Sequelize</code>, so we&#39;ll import the module.</p>
+
+<div class="highlight"><pre><code class="js"><span class="c1">// initializers/sqlite.js</span>
+<span class="kd">var</span> <span class="nx">Sequelize</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;sequelize&#39;</span><span class="p">);</span>
+
+<span class="nx">exports</span><span class="p">.</span><span class="nx">sqlite</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">api</span><span class="p">,</span> <span class="nx">next</span><span class="p">){</span>
+
+  <span class="nx">api</span><span class="p">.</span><span class="nx">sqlite</span> <span class="o">=</span> <span class="p">{};</span>
+
+  <span class="nx">api</span><span class="p">.</span><span class="nx">sqlite</span><span class="p">.</span><span class="nx">_start</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">api</span><span class="p">,</span> <span class="nx">next</span><span class="p">){</span>
+    <span class="nx">next</span><span class="p">();</span>
+  <span class="p">};</span>
+
+  <span class="nx">api</span><span class="p">.</span><span class="nx">sqlite</span><span class="p">.</span><span class="nx">_stop</span> <span class="o">=</span>  <span class="kd">function</span><span class="p">(</span><span class="nx">api</span><span class="p">,</span> <span class="nx">next</span><span class="p">){</span>
+    <span class="nx">next</span><span class="p">();</span>
+  <span class="p">};</span>
+
+  <span class="nx">next</span><span class="p">();</span>
+<span class="p">}</span></code></pre></div>
+
+<h3>Wait, models?</h3>
+
+<p>Right, the cool thing about Sequelize is that it abstracts creating your tables away from you, making it easy to define your models in one place and not necessarily have to worry about your table naming etc. Let&#39;s create our <code>Meat</code> model file:</p>
+
+<p><code>$ mkdir models &amp;&amp; cd $_ &amp;&amp; touch Meat.js</code></p>
+
+<div class="highlight"><pre><code class="js"><span class="c1">// models/Meat.js</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">sequelize</span><span class="p">,</span> <span class="nx">DataTypes</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">sequelize</span><span class="p">.</span><span class="nx">define</span><span class="p">(</span><span class="s1">&#39;Meat&#39;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">id</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">type</span><span class="o">:</span> <span class="nx">DataTypes</span><span class="p">.</span><span class="nx">INTEGER</span><span class="p">,</span>
+      <span class="nx">primaryKey</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+      <span class="nx">autoIncrement</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">},</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="nx">DataTypes</span><span class="p">.</span><span class="nx">STRING</span><span class="p">,</span>
+    <span class="nx">tastes_like</span><span class="o">:</span> <span class="nx">DataTypes</span><span class="p">.</span><span class="nx">STRING</span><span class="p">,</span>
+    <span class="nx">is_tasty</span><span class="o">:</span> <span class="nx">DataTypes</span><span class="p">.</span><span class="nx">BOOLEAN</span>
+  <span class="p">});</span>
+<span class="p">};</span></code></pre></div>
+
+<p>Later when we actually import our &quot;Meat&quot; module, it gets injected by Sequelize with our Sequelize object and a shortcut to an enum <code>DataTypes</code>. You can read about Sequelize data types on their <a href="https://github.com/sequelize/sequelize/wiki/API-Reference-DataTypes">official documentation</a>. We&#39;re using the <code>define</code> method here which takes a string description of your model in the singular and then an attributes hash which will map to columns in the data store.</p>
+
+<h3>...and we&#39;re back (to Initializers)</h3>
+
+<p>Back to our sqlite initializer (<code>initializers/sqlite.js</code>), we need to create a <a href="https://github.com/sequelize/sequelize/wiki/API-Reference-Sequelize#new-sequelize">new instance of Sequelize</a>, and also create a models collection (<code>api.models</code>), and use the <code>import</code> method of our Sequelize instance <code>sqlized</code>.</p>
+
+<div class="highlight"><pre><code class="js"><span class="c1">// initializers/sqlite.js</span>
+<span class="kd">var</span> <span class="nx">Sequelize</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;sequelize&#39;</span><span class="p">);</span>
+
+<span class="nx">exports</span><span class="p">.</span><span class="nx">sqlite</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">api</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+    
+  <span class="c1">// omitting database name, username and password as it&#39;s not required</span>
+  <span class="kd">var</span> <span class="nx">sqlized</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Sequelize</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span><span class="kc">null</span><span class="p">,</span><span class="kc">null</span><span class="p">,</span><span class="nx">api</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">sqlite</span><span class="p">);</span>
+  
+  <span class="nx">api</span><span class="p">.</span><span class="nx">models</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">Meat</span><span class="o">:</span> <span class="nx">sqlized</span><span class="p">.</span><span class="kr">import</span><span class="p">(</span><span class="nx">__dirname</span> <span class="o">+</span> <span class="s1">&#39;/../models/Meat.js&#39;</span><span class="p">)</span>
+  <span class="p">};</span>
+  
+  <span class="nx">api</span><span class="p">.</span><span class="nx">sqlite</span> <span class="o">=</span> <span class="p">{};</span>
+
+  <span class="nx">api</span><span class="p">.</span><span class="nx">sqlite</span><span class="p">.</span><span class="nx">_start</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">api</span><span class="p">,</span> <span class="nx">next</span><span class="p">){</span>
+    <span class="nx">next</span><span class="p">();</span>
+  <span class="p">};</span>
+
+  <span class="nx">api</span><span class="p">.</span><span class="nx">sqlite</span><span class="p">.</span><span class="nx">_stop</span> <span class="o">=</span>  <span class="kd">function</span><span class="p">(</span><span class="nx">api</span><span class="p">,</span> <span class="nx">next</span><span class="p">){</span>
+    <span class="nx">next</span><span class="p">();</span>
+  <span class="p">};</span>
+
+  <span class="nx">next</span><span class="p">();</span>
+<span class="p">};</span></code></pre></div>
+
+<p>Later, when we need to perform CRUD operations on our <code>Meat</code> models, we&#39;ve stored a reference in <code>api.models</code>.</p>
+
+<h3>Sync the schema</h3>
+
+<p>You may have noticed that all we&#39;ve done with our actual SQLite store is simply create the file. It&#39;s time to syncronize our models with the SQLite store and create any necessary schema. Sequelize makes this simple with the <code>sync</code> method. <code>sync</code> returns a Promise, so we&#39;ll provide two functions (succes, error) to <code>then</code>.</p>
+
+<div class="highlight"><pre><code class="js"><span class="nx">api</span><span class="p">.</span><span class="nx">sqlite</span><span class="p">.</span><span class="nx">_start</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">api</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">api</span><span class="p">.</span><span class="nx">models</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">Meat</span><span class="o">:</span> <span class="nx">sqlized</span><span class="p">.</span><span class="kr">import</span><span class="p">(</span><span class="nx">__dirname</span> <span class="o">+</span> <span class="s1">&#39;/../models/Meat.js&#39;</span><span class="p">)</span>
+        <span class="p">};</span>
+
+        <span class="nx">sqlized</span>
+            <span class="p">.</span><span class="nx">sync</span><span class="p">()</span>
+            <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">syncSuccess</span><span class="p">,</span> <span class="nx">syncError</span><span class="p">);</span>
+
+        <span class="kd">function</span> <span class="nx">syncSuccess</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nx">api</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Succesfully synced DB!&#39;</span><span class="p">);</span>
+            <span class="nx">next</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="kd">function</span> <span class="nx">syncError</span><span class="p">(</span><span class="nx">ex</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">api</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Error while executing DB sync: &#39;</span><span class="o">+</span> <span class="nx">ex</span><span class="p">.</span><span class="nx">message</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">);</span>
+            <span class="nx">process</span><span class="p">.</span><span class="nx">exit</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">};</span></code></pre></div>
+
+<h3>Do it doug!</h3>
+
+<p>Let&#39;s start this thing up and see what happens.</p>
+
+<div class="highlight"><pre><code class="bash"><span class="nv">$ </span>npm start</code></pre></div>
+
+<p>In a flurry of activity, you should see a bunch of logs flow down your screen. Some items to make a note of: </p>
+
+<div class="highlight"><pre><code class="bash">2014-07-14 5:16:44 - info: running custom initializer: sqlite</code></pre></div>
+
+<div class="highlight"><pre><code class="bash">2014-07-14 5:16:44 - info: Succesfully synced DB!
+2014-07-14 5:16:44 - debug:  &gt; start: sqlite</code></pre></div>
+
+<p>At this point you should be able to open up <code>store/app.sqlite</code> and see our Meat schema which has been automagically created by Sequelize. Hit <code>CTRL-C</code> to quite our server process.</p>
+
+<h3>Actions</h3>
+
+<p>We have succesfully created a SQLite store for our Meat schema, but we have no way of getting data into it via the API. Let&#39;s quickly create an ActionHero action to expose an API endpoint which we can <code>POST</code> to create some meat!</p>
+
+<div class="highlight"><pre><code class="js"><span class="c1">// actions/meat.js</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">meatAdd</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;meatAdd&#39;</span><span class="p">,</span>
+  <span class="nx">description</span><span class="o">:</span> <span class="s1">&#39;Add a new meat!&#39;</span><span class="p">,</span>
+  <span class="nx">blockedConnectionTypes</span><span class="o">:</span> <span class="p">[],</span>
+  <span class="nx">outputExample</span><span class="o">:</span> <span class="p">{},</span>
+  <span class="nx">matchExtensionMimeType</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+  <span class="nx">version</span><span class="o">:</span> <span class="mf">1.0</span><span class="p">,</span>
+  <span class="nx">toDocument</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+
+  <span class="nx">inputs</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">required</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+    <span class="nx">optional</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;is_tasty&#39;</span><span class="p">,</span> <span class="s1">&#39;tastes_like&#39;</span><span class="p">],</span>
+  <span class="p">},</span>
+
+  <span class="nx">run</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">api</span><span class="p">,</span> <span class="nx">connection</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+    
+    <span class="kd">var</span> <span class="nx">new_meat</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="nx">name</span><span class="o">:</span> <span class="nx">connection</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+      <span class="nx">is_tasty</span><span class="o">:</span> <span class="o">!!</span><span class="nx">connection</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">is_tasty</span><span class="p">,</span>
+      <span class="nx">tastes_like</span><span class="o">:</span> <span class="nx">connection</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">tastes_like</span> <span class="o">||</span> <span class="kc">null</span>
+    <span class="p">};</span>
+
+    <span class="nx">api</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">Meat</span>
+      <span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">new_meat</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">createSuccess</span><span class="p">,</span> <span class="nx">createError</span><span class="p">)</span>
+      <span class="p">.</span><span class="k">finally</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">next</span><span class="p">(</span><span class="nx">connection</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+      <span class="p">});</span>
+
+    <span class="kd">function</span> <span class="nx">createSuccess</span><span class="p">(</span><span class="nx">created_meat</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">connection</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">meat</span> <span class="o">=</span> <span class="nx">created_meat</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">createError</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">api</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Could not create new meat named: &#39;</span> <span class="o">+</span> <span class="nx">new_meat</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">);</span>
+        <span class="nx">connection</span><span class="p">.</span><span class="nx">error</span> <span class="o">=</span> <span class="nx">err</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">};</span></code></pre></div>
+
+<h3>Try it out</h3>
+
+<p>After saving <code>actions/meat.js</code>, start ActionHero up again by issuing <code>npm start</code>. Using a utility (I used POSTman, you can use cURL etc.), send a <code>POST</code> to <code>http://localhost:8080/api/meatAdd</code> and add some meat!</p>
+
+<p><img src="/assets/images/postman_actionhero.jpg" alt="POSTMan Example"></p>
+
+<p>Open up your favorite SQLite GUI and verify the record was stored:</p>
+
+<p><img src="/assets/images/sqlite_browser.jpg" alt="Our Meat Exists"></p>
+
+<p>Up next, we&#39;ll create an <a href="http://emberjs.com">EmberJS</a> based UI for our meat app.</p>
+
+<p><a href="https://github.com/chiefy/sqlite-sequelize-actionhero-demo" class="github-button" data-style="mega" data-icon="octicon-git-branch" > Fork </a> 
+I&#39;ve included the source for this project on <a href="https://github.com/chiefy/sqlite-sequelize-actionhero-demo">GitHub</a>. </p>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+        	<!-- If we want to display author's name and bio -->
+            
+                <section class="author">
+                	<header> <a href=""> <img class="profile" src="/assets/images/chief_is_dangerous.jpg" alt="Author's an idiot."></a></header>
+                	<article>
+                		<!-- Author Name -->
+                    	<h4> Christopher "Chief" Najewicz </h4>
+                    	<!-- Author Bio -->
+                    	<p> 
+                    		My name is chief. I like to do the javascripts, and "web development." Feel free to follow my antics: <a href="http://twitter.com/tehsuck">@tehsuck</a>.
+                    	</p>
+                    </article>
+                </section>                
+            
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="http://twitter.com/share?text=Using SQLite and Sequlize with ActionHero&amp;url=https://chiefy.github.io/2014/07/13/using-sqlite-sequelize-with-actionhero.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://chiefy.github.io/2014/07/13/using-sqlite-sequelize-with-actionhero.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=https://chiefy.github.io/2014/07/13/using-sqlite-sequelize-with-actionhero.html"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+            
+            
+            <section class="disqus">
+            	<div id="disqus_thread"></div>
+            	<script type="text/javascript">
+
+            	    var disqus_shortname = 'chiefy'; 
+            		var disqus_developer = 0; // developer mode is on
+            	    (function() {
+            	        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            	        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            	        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            	    })();
+            	</script>
+            	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+            	<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+            </section>
+            
+        	
+        </footer>
+
+    </article>
+
+</main>
+
+        <footer class="site-footer">
+            <a class="subscribe icon-feed" href="rss.xml"><span class="tooltip">Subscribe!</span></a>
+            <div class="inner">
+                <section class="copyright">All content copyright <a href="">throw new Error("Chief")</a> &copy;  &bull; All rights reserved.</section>
+            </div>
+        </footer>
+        <script type="text/javascript" src="/assets/js/jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+        <script type="text/javascript" src="/assets/js/index.js"></script>
+        <script async defer id="github-bjs" src="//buttons.github.io/buttons.js"></script>
+    </body>
+</html>
