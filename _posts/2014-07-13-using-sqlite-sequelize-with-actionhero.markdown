@@ -31,15 +31,13 @@ $ cd ~ && mkdir meatr && cd $_ && actionhero generate
 This will scaffold a new ActionHero project. At this point you can run `npm start` and you can visit `http://localhost:8080` to see some basic info about your ActionHero API.
 
 ### Add dependencies
-Next, we will need to add some dependencies to our project. We are going to install `sqlite3` for SQLite support and Sequelize which is an ORM designed to abstract away your DB boilerplate code. Sequelize works with SQLite, MySQL and Postgres as of this writing. For quick prototyping it might be worth starting with a small/local store like SQLite and then moving to MySQL or Postgres when you have to start thinking about scaling / performance issues. Also there are some features that MySQL and Postgres include that SQLite won't (and can't) ever support.
-
+Next, we will need to add some dependencies to our project. We are going to install `sqlite3` for SQLite support and [Sequelize](http://sequelizejs.com/) which is an ORM designed to abstract away your DB boilerplate code. Sequelize works with SQLite, MySQL and Postgres as of this writing. For quick prototyping it might be worth starting with a small/local store like SQLite and then moving to MySQL or Postgres when you have to start thinking about scaling / performance issues. Also there are some features that MySQL and Postgres include that SQLite won't (and can't) ever support.
 {% highlight bash %}
 $ npm install --save sqlite3 sequelize
 {% endhighlight %}
 
 ### Create a config
 Although we're just going to be using a simple SQLite flat-file database, let's make a configuration for any parameters we'll need to send along.
-
 {% highlight js %}
 // config/sqlite.js
 module.exports.default = {
@@ -54,7 +52,7 @@ module.exports.default = {
 All we are doing here is attaching a new function to ActionHero's default configuration. The function gets injected with the root ActionHero object `api`, but we don't really need to worry about that here. We simply return an object with two keys: `storage` & `dialect`. `storage` will tell Sequelize where the file store is located. `dialect` informs Sequelize what type of store we are using, in this case it's a SQLite file store. If you were going to use MySQL or Postgres, you could include other configuration properties here such as `username`,`password`,`port`,`hostname`, etc.
 
 ### Let's initialize!
-ActionHero has the concept of `Initializers` which bootstrap configurations before the API initially starts. We need to expose an API to setup our data store. ActionHero provides a handy command line interface to scaffold certain elements of the project.
+ActionHero has [the concept of `Initializers`](http://actionherojs.com/docs/core/initializers.html) which bootstrap configurations before the API initially starts. We need to expose an API to setup our data store. ActionHero provides a handy command line interface to scaffold certain elements of the project.
 
 {% highlight bash %}
 $ actionhero generateInitializer --name="sqlite"
@@ -62,7 +60,7 @@ info: actionhero >> generateInitializer
 info:  - wrote file 'C:\Users\cnajewicz\Documents\meatr\initializers\sqlite.js'
 {% endhighlight %}
 
-This creates a new file at `initializers/sqlite.js` with some templated methods:
+This creates a new file at `initializers/sqlite.js` with some stubbed methods:
 
 {% highlight js %}
 // initializers/sqlite.js
@@ -127,10 +125,10 @@ module.exports = function(sequelize, DataTypes) {
 };
 {% endhighlight %}
 
-Later when we actually import our Meat module, it gets injected by Sequelize with our Sequelize object and a shortcut to an enum of `DataTypes`. You can read about Sequelize data types on their official documentation. We're using the `define` method here which takes a string description of your model in the singular and then an attributes hash which will map to columns in the data store.
+Later when we actually import our "Meat" module, it gets injected by Sequelize with our Sequelize object and a shortcut to an enum `DataTypes`. You can read about Sequelize data types on their [official documentation](https://github.com/sequelize/sequelize/wiki/API-Reference-DataTypes). We're using the `define` method here which takes a string description of your model in the singular and then an attributes hash which will map to columns in the data store.
 
 ### ...and we're back (to Initializers)
-Back to our sqlite initializer (`initializers/sqlite.js`), we need to create a new instance of Sequelize, and also create a models collection (`api.models`), and use the `import` method of our Sequelize instance `sqlized`.
+Back to our sqlite initializer (`initializers/sqlite.js`), we need to create a [new instance of Sequelize](https://github.com/sequelize/sequelize/wiki/API-Reference-Sequelize#new-sequelize), and also create a models collection (`api.models`), and use the `import` method of our Sequelize instance `sqlized`.
 
 {% highlight js %}
 // initializers/sqlite.js
@@ -262,3 +260,8 @@ After saving `actions/meat.js`, start ActionHero up again by issuing `npm start`
 Open up your favorite SQLite GUI and verify the record was stored:
 
 ![Our Meat Exists](/assets/images/sqlite_browser.jpg)
+
+Up next, we'll create an [EmberJS](http://emberjs.com) based UI for our meat app.
+
+{% github_fork_button chiefy,sqlite-sequelize-actionhero-demo %} 
+I've included the source for this project on [GitHub](https://github.com/chiefy/sqlite-sequelize-actionhero-demo). 
