@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Using SQLite and Sequlize with ActionHero"
+title: "Using SQLite and Sequelize with ActionHero"
 date: 2014-07-13 16:59:27
 tags: 
   - node, 
