@@ -1,0 +1,13 @@
+name: "throw new Error(\"Chief\")"
+title: "throw new Error(\"Chief\")"
+description: "I complain about JavaScript, Angular, Sails and other interwebs stuff"
+meta_description: "JavaScript, Sails, Node, Angular, Christopher Najewicz, chief"
+
+markdown: redcarpet
+highlighter: pygments
+logo: false
+paginate: 15
+
+# Details for the RSS feed generator
+url:            'https://chiefy.github.io'
+author:         'Christopher "Chief" Najewicz'
