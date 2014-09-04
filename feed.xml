@@ -7,6 +7,85 @@
     <atom:link href="https://chiefy.github.io/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>Using Sails Generators To Integrate An ember-cli Project</title>
+        <description>&lt;p&gt;Recently I have been trying to learn &lt;a href=&quot;http://emberjs.com/&quot;&gt;Ember&lt;/a&gt; and I came across the amazing command line utility &lt;a href=&quot;http://www.ember-cli.com/&quot;&gt;&lt;code&gt;ember-cli&lt;/code&gt;&lt;/a&gt; written by &lt;a href=&quot;https://github.com/stefanpenner&quot;&gt;Stefan Penner&lt;/a&gt;. &lt;code&gt;ember-cli&lt;/code&gt; is the missing utility belt for ember based projects. Among its features is a generator that creates a strongly opinionated project structure and build chain (&lt;code&gt;ember&lt;/code&gt; is strongly opinionated - &lt;a href=&quot;http://confy.wecode.io/talks/2013/arrrrcamp/ember-on-rails-convention-over-configuration-on-both-sides-of-the-tubes&quot;&gt;convention over configuration&lt;/a&gt;). &lt;code&gt;ember-cli&lt;/code&gt; uses an &lt;a href=&quot;http://esnext.github.io/es6-module-transpiler/&quot;&gt;ES6 module transpiler&lt;/a&gt; allowing users to use next-gen ES6 module support in their current projects today. It also utilizes &lt;a href=&quot;https://github.com/broccolijs/broccoli&quot;&gt;&lt;code&gt;broccoli&lt;/code&gt;&lt;/a&gt; for build tooling as opposed to &lt;code&gt;grunt&lt;/code&gt; which Sails seems to favor. More on that later.&lt;/p&gt;
+
+&lt;p&gt;Along with &lt;code&gt;ember-cli&lt;/code&gt;, I ran across &lt;a href=&quot;https://github.com/mphasize/sails-ember-blueprints&quot;&gt;&lt;code&gt;sails-ember-blueprints&lt;/code&gt;&lt;/a&gt; by &lt;a href=&quot;https://github.com/mphasize&quot;&gt;mphasize&lt;/a&gt; which overrides some of Sails&amp;#39; blueprint templates for compatibility with &lt;a href=&quot;http://emberjs.com/api/data/&quot;&gt;Ember-Data&lt;/a&gt;&amp;#39;s &lt;code&gt;RESTAdapter&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;I decided to take a stab at creating some &lt;a href=&quot;http://sailsjs.org/&quot;&gt;Sails&lt;/a&gt; generators around these great projects.&lt;/p&gt;
+
+&lt;h2&gt;Getting Started&lt;/h2&gt;
+
+&lt;p&gt;In order to get started, you will need to make sure you have the latest &lt;code&gt;sails&lt;/code&gt;, &lt;code&gt;ember-cli&lt;/code&gt; and &lt;code&gt;sails-generate-new-ember&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm install -g sails ember-cli sails-generate-new-ember sails-generate-frontend-ember sails-generate-backend-ember&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;To use the newly installed generator, you will need to modify (or create) your &lt;code&gt;.sailsrc&lt;/code&gt; located in your home folder. Sails allows you to override its built-in generators for creating a new application structure. So in theory you could:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-json&quot; data-lang=&quot;json&quot;&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;quot;generators&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;&amp;quot;modules&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;nt&quot;&gt;&amp;quot;new&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;sails-generate-new-ember&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The issue with that, especially if you save your &lt;code&gt;.sailsrc&lt;/code&gt; in your home folder, is that everytime you call &lt;code&gt;sails new&lt;/code&gt; it will use the ember-based generators. I have a feeling that you probably won&amp;#39;t want that, so instead, you should create a &lt;code&gt;.sailsrc&lt;/code&gt; that uses an alternate module name:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-json&quot; data-lang=&quot;json&quot;&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;quot;generators&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;&amp;quot;modules&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;nt&quot;&gt;&amp;quot;ember-app&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;sails-generate-new-ember&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Finally, we can create our new project by calling &lt;code&gt;sails generate&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;sails generate ember-app myAwesomeApp&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;Project Structure&lt;/h2&gt;
+
+&lt;p&gt;If you are familiar with the default &lt;code&gt;sails new &amp;lt;app-name&amp;gt;&lt;/code&gt; generator and it&amp;#39;s resulting project structure, you will find some large differences here. The first thing to note is that there is no &lt;code&gt;assets&lt;/code&gt; folder. Instead, there is an &lt;code&gt;ember&lt;/code&gt; folder which is where all of the &lt;code&gt;ember-cli&lt;/code&gt; based project structure resides. Since &lt;code&gt;ember-cli&lt;/code&gt; uses &lt;code&gt;broccoli&lt;/code&gt; for tooling, I&amp;#39;ve decided to remove the &lt;code&gt;Gruntfile.js&lt;/code&gt; and &lt;code&gt;tasks&lt;/code&gt; folder for the time being as all of the frontend build is being done by &lt;code&gt;ember serve&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h4&gt;Sails Blueprints&lt;/h4&gt;
+
+&lt;p&gt;I&amp;#39;ve taken the &lt;code&gt;sails-ember-blueprints&lt;/code&gt; project code and inserted it into the &lt;code&gt;sails-generate-backend-ember&lt;/code&gt; step of the generator. The blueprints reside in the &lt;code&gt;api/blueprints&lt;/code&gt; folder, they modify Sails&amp;#39; response output to achieve compatibility with Ember-Data&amp;#39;s &lt;a href=&quot;http://emberjs.com/api/data/classes/DS.RESTAdapter.html&quot;&gt;&lt;code&gt;RESTAdapter&lt;/code&gt;&lt;/a&gt;. Many thanks to GitHub user &lt;a href=&quot;https://github.com/mphasize&quot;&gt;mphasize&lt;/a&gt; for this project as I am sure it saved me a ton of time and effort.&lt;/p&gt;
+
+&lt;h2&gt;Fire It Up!&lt;/h2&gt;
+
+&lt;p&gt;For now, during development, you will need to start up two seperate servers: your Sails API server which will serve your JSON API (port 1337), and &lt;code&gt;ember-cli&lt;/code&gt;&amp;#39;s server which will serve up the proper client application code (port 4200). As you will see when you point your browser to &lt;code&gt;http://localhost:4200/&lt;/code&gt;, there is nothing really to show as we haven&amp;#39;t created any of our frontend (or backend) project. I recommend opening two console tabs and executing one of these commands in each.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;sails lift&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;ember &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; ember serve&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/welcome_to_ember.png&quot; alt=&quot;Initial ember website&quot;&gt;&lt;/p&gt;
+
+&lt;h2&gt;Lessons Learned or How I Learned To Stop Worrying and Love The &lt;code&gt;broccoli&lt;/code&gt;&lt;/h2&gt;
+
+&lt;p&gt;When I was developing this generator I was thinking it would be a great opportunity to try to use &lt;code&gt;broccoli&lt;/code&gt; for building out the frontend and serving it with &lt;code&gt;sails lift&lt;/code&gt;. Unfortunately, after looking into some of the code in &lt;code&gt;ember-cli&lt;/code&gt;, it&amp;#39;s not as easy as I had hoped. Both &lt;code&gt;sails lift&lt;/code&gt; and &lt;code&gt;ember serve&lt;/code&gt; try to serve using their own instances of express. &lt;code&gt;ember serve&lt;/code&gt; uses &lt;code&gt;broccoli&lt;/code&gt; under the hood to do a lot when watching templates and files in the &lt;code&gt;ember&lt;/code&gt; project. I have mostly unsuccesfully tried to bootstrap both of these processes in the project&amp;#39;s main &lt;code&gt;app.js&lt;/code&gt; file, which you can run with &lt;code&gt;node app.js&lt;/code&gt;, but you will see both commands try to use the output stream asynchronously and it results in a confusing jumble of console output. This would especially be confusing when trying to debug.  &lt;/p&gt;
+
+&lt;h2&gt;Next Steps&lt;/h2&gt;
+
+&lt;p&gt;Obviously this site doesn&amp;#39;t do anything with our Sails backend,  but it gives you a starting point to create your web application using Sails and Ember. Having to run two commands to serve the Sails backend and Ember frontend is not optimal. I created these generators as an exercise to learn &lt;code&gt;ember-cli&lt;/code&gt;, ES6 Modules and dig a little deeper into Sails generators. As Ember projects seem to gravitate towards using Rails, I thought this would be a clear next-step to get the application stack &lt;em&gt;one hundred percent JS&lt;/em&gt;. &lt;/p&gt;
+
+&lt;h4&gt;!CAUTION!&lt;/h4&gt;
+
+&lt;p&gt;These generators are not intended for production use (yet), but any feedback and/or critique is welcome.&lt;/p&gt;
+
+&lt;h4&gt;&lt;code&gt;sails-generate-new-ember&lt;/code&gt;&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/chiefy/sails-generate-new-ember&quot; class=&quot;github-button&quot; data-style=&quot;mega&quot; data-icon=&quot;octicon-star&quot; data-count-href=&quot;/chiefy/sails-generate-new-ember#stargazers&quot; data-count-api=&quot;/repos/chiefy/sails-generate-new-ember#stargazers_count&quot;&gt; Star &lt;/a&gt;
+&lt;a href=&quot;https://github.com/chiefy/sails-generate-new-ember&quot; class=&quot;github-button&quot; data-style=&quot;mega&quot; data-icon=&quot;octicon-git-branch&quot; &gt; Fork &lt;/a&gt;
+&lt;a href=&quot;https://github.com/chiefy/&quot; class=&quot;github-button&quot; data-style=&quot;mega&quot; data-icon=&quot;octicon-mark-github&quot; data-count-href=&quot;/chiefy/followers&quot; data-count-api=&quot;/users/chiefy#followers&quot;&gt; Follow chiefy &lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Wed, 03 Sep 2014 14:00:00 -0400</pubDate>
+        <link>https://chiefy.github.io/2014/09/03/sails-generate-ember.html</link>
+        <guid isPermaLink="true">https://chiefy.github.io/2014/09/03/sails-generate-ember.html</guid>
+      </item>
+    
+      <item>
         <title>Using SQLite and Sequelize with ActionHero</title>
         <description>&lt;p&gt;This past weekend I was checking out &lt;a href=&quot;http://actionherojs.com/&quot;&gt;ActionHero&lt;/a&gt;, a pretty nice API framework written in Node.js which claims to be: &amp;quot;Reusable, Scalable, and Quick!&amp;quot; I was setting up a quick example and I didn&amp;#39;t want to have to connect to a MySQL or Postgres DB. ActionHero comes with &lt;code&gt;fakeredis&lt;/code&gt;, an in-memory pseudo-redis store, which is great for experimenting but I wanted to use a local disk store. A few google searches didn&amp;#39;t turn up too much on how to use SQLite with ActionHero, so here we go.&lt;/p&gt;
 
@@ -20,11 +99,11 @@
 
 &lt;h3&gt;Install ActionHero&lt;/h3&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm install -g actionhero&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm install -g actionhero&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h3&gt;Create a new project&lt;/h3&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ~ &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; mkdir meatr &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$_&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; actionhero generate&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ~ &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; mkdir meatr &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$_&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; actionhero generate&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;This will scaffold a new ActionHero project. At this point you can run &lt;code&gt;npm start&lt;/code&gt; and you can visit &lt;code&gt;http://localhost:8080&lt;/code&gt; to see some basic info about your ActionHero API.&lt;/p&gt;
 
@@ -32,13 +111,13 @@
 
 &lt;p&gt;Next, we will need to add some dependencies to our project. We are going to install &lt;code&gt;sqlite3&lt;/code&gt; for SQLite support and &lt;a href=&quot;http://sequelizejs.com/&quot;&gt;Sequelize&lt;/a&gt; which is an ORM designed to abstract away your DB boilerplate code. Sequelize works with SQLite, MySQL and Postgres as of this writing. For quick prototyping it might be worth starting with a small/local store like SQLite and then moving to MySQL or Postgres when you have to start thinking about scaling / performance issues. Also there are some features that MySQL and Postgres include that SQLite won&amp;#39;t (and can&amp;#39;t) ever support.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm install --save sqlite3 sequelize&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm install --save sqlite3 sequelize&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h3&gt;Create a config&lt;/h3&gt;
 
 &lt;p&gt;Although we&amp;#39;re just going to be using a simple SQLite flat-file database, let&amp;#39;s make a configuration for any parameters we&amp;#39;ll need to send along.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;js&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// config/sqlite.js&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// config/sqlite.js&lt;/span&gt;
 &lt;span class=&quot;nx&quot;&gt;module&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;exports&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;default&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;nx&quot;&gt;sqlite&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;api&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
         &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
@@ -54,13 +133,13 @@
 
 &lt;p&gt;ActionHero has &lt;a href=&quot;http://actionherojs.com/docs/core/initializers.html&quot;&gt;the concept of &lt;code&gt;Initializers&lt;/code&gt;&lt;/a&gt; which bootstrap configurations before the API initially starts. We need to expose an API to setup our data store. ActionHero provides a handy command line interface to scaffold certain elements of the project.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;actionhero generateInitializer --name&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;sqlite&amp;quot;&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;actionhero generateInitializer --name&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;sqlite&amp;quot;&lt;/span&gt;
 info: actionhero &amp;gt;&amp;gt; generateInitializer
 info:  - wrote file &lt;span class=&quot;s1&quot;&gt;&amp;#39;C:\Users\cnajewicz\Documents\meatr\initializers\sqlite.js&amp;#39;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;This creates a new file at &lt;code&gt;initializers/sqlite.js&lt;/code&gt; with some stubbed methods:&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;js&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// initializers/sqlite.js&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// initializers/sqlite.js&lt;/span&gt;
 &lt;span class=&quot;nx&quot;&gt;exports&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;sqlite&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;api&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
 
   &lt;span class=&quot;nx&quot;&gt;api&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;sqlite&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{};&lt;/span&gt;
@@ -80,7 +159,7 @@ info:  - wrote file &lt;span class=&quot;s1&quot;&gt;&amp;#39;C:\Users\cnajewicz
 
 &lt;p&gt;ActionHero has several pre-defined hooks: &lt;code&gt;_start&lt;/code&gt; and &lt;code&gt;_stop&lt;/code&gt; run exactly when you think they would. We&amp;#39;ll be focusing on the &lt;code&gt;_start&lt;/code&gt; method to setup our data store and models. We&amp;#39;ll be creating a new instance of &lt;code&gt;Sequelize&lt;/code&gt;, so we&amp;#39;ll import the module.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;js&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// initializers/sqlite.js&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// initializers/sqlite.js&lt;/span&gt;
 &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Sequelize&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;sequelize&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 
 &lt;span class=&quot;nx&quot;&gt;exports&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;sqlite&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;api&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
@@ -104,7 +183,7 @@ info:  - wrote file &lt;span class=&quot;s1&quot;&gt;&amp;#39;C:\Users\cnajewicz
 
 &lt;p&gt;&lt;code&gt;$ mkdir models &amp;amp;&amp;amp; cd $_ &amp;amp;&amp;amp; touch Meat.js&lt;/code&gt;&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;js&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// models/Meat.js&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// models/Meat.js&lt;/span&gt;
 &lt;span class=&quot;nx&quot;&gt;module&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;exports&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;sequelize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;DataTypes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;sequelize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;define&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;Meat&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
@@ -124,7 +203,7 @@ info:  - wrote file &lt;span class=&quot;s1&quot;&gt;&amp;#39;C:\Users\cnajewicz
 
 &lt;p&gt;Back to our sqlite initializer (&lt;code&gt;initializers/sqlite.js&lt;/code&gt;), we need to create a &lt;a href=&quot;https://github.com/sequelize/sequelize/wiki/API-Reference-Sequelize#new-sequelize&quot;&gt;new instance of Sequelize&lt;/a&gt;, and also create a models collection (&lt;code&gt;api.models&lt;/code&gt;), and use the &lt;code&gt;import&lt;/code&gt; method of our Sequelize instance &lt;code&gt;sqlized&lt;/code&gt;.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;js&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// initializers/sqlite.js&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// initializers/sqlite.js&lt;/span&gt;
 &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Sequelize&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;sequelize&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 
 &lt;span class=&quot;nx&quot;&gt;exports&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;sqlite&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;api&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
@@ -155,7 +234,7 @@ info:  - wrote file &lt;span class=&quot;s1&quot;&gt;&amp;#39;C:\Users\cnajewicz
 
 &lt;p&gt;You may have noticed that all we&amp;#39;ve done with our actual SQLite store is simply create the file. It&amp;#39;s time to syncronize our models with the SQLite store and create any necessary schema. Sequelize makes this simple with the &lt;code&gt;sync&lt;/code&gt; method. &lt;code&gt;sync&lt;/code&gt; returns a Promise, so we&amp;#39;ll provide two functions (succes, error) to &lt;code&gt;then&lt;/code&gt;.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;js&quot;&gt;&lt;span class=&quot;nx&quot;&gt;api&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;sqlite&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;_start&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;api&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;nx&quot;&gt;api&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;sqlite&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;_start&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;api&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
         &lt;span class=&quot;nx&quot;&gt;api&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;models&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
             &lt;span class=&quot;nx&quot;&gt;Meat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;sqlized&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;__dirname&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;/../models/Meat.js&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
         &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
@@ -179,13 +258,13 @@ info:  - wrote file &lt;span class=&quot;s1&quot;&gt;&amp;#39;C:\Users\cnajewicz
 
 &lt;p&gt;Let&amp;#39;s start this thing up and see what happens.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm start&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm start&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;In a flurry of activity, you should see a bunch of logs flow down your screen. Some items to make a note of: &lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;2014-07-14 5:16:44 - info: running custom initializer: sqlite&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;2014-07-14 5:16:44 - info: running custom initializer: sqlite&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;2014-07-14 5:16:44 - info: Succesfully synced DB!
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;2014-07-14 5:16:44 - info: Succesfully synced DB!
 2014-07-14 5:16:44 - debug:  &amp;gt; start: sqlite&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;At this point you should be able to open up &lt;code&gt;store/app.sqlite&lt;/code&gt; and see our Meat schema which has been automagically created by Sequelize. Hit &lt;code&gt;CTRL-C&lt;/code&gt; to quite our server process.&lt;/p&gt;
@@ -194,7 +273,7 @@ info:  - wrote file &lt;span class=&quot;s1&quot;&gt;&amp;#39;C:\Users\cnajewicz
 
 &lt;p&gt;We have succesfully created a SQLite store for our Meat schema, but we have no way of getting data into it via the API. Let&amp;#39;s quickly create an ActionHero action to expose an API endpoint which we can &lt;code&gt;POST&lt;/code&gt; to create some meat!&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;js&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// actions/meat.js&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// actions/meat.js&lt;/span&gt;
 &lt;span class=&quot;nx&quot;&gt;exports&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;meatAdd&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
   &lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;meatAdd&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
   &lt;span class=&quot;nx&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;Add a new meat!&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
@@ -261,17 +340,17 @@ I&amp;#39;ve included the source for this project on &lt;a href=&quot;https://gi
 
 &lt;p&gt;The first thing you will need to do is make sure to install Sails release-candidate 0.10.x.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm install -g sails@beta&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm install -g sails@beta&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Install sails-generate-frontend-angular.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm install -g sails-generate-frontend-angular&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm install -g sails-generate-frontend-angular&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;The best way to use this generator is to have it kick off as part of Sails&amp;#39; &lt;code&gt;generate-new&lt;/code&gt; generator which runs when you execute &lt;code&gt;sails new &amp;lt;appName&amp;gt;&lt;/code&gt;. In order for Sails to recognize this generator, we must modify our &lt;code&gt;.sailsrc&lt;/code&gt; file.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ~ &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; vim .sailsrc&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ~ &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; vim .sailsrc&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;json&quot;&gt;&lt;span class=&quot;lineno&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-json&quot; data-lang=&quot;json&quot;&gt;&lt;span class=&quot;lineno&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;2&lt;/span&gt;     &lt;span class=&quot;nt&quot;&gt;&amp;quot;generators&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;3&lt;/span&gt;         &lt;span class=&quot;nt&quot;&gt;&amp;quot;modules&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;4&lt;/span&gt;             &lt;span class=&quot;nt&quot;&gt;&amp;quot;frontend&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;sails-generate-frontend-angular&amp;quot;&lt;/span&gt;
@@ -281,13 +360,13 @@ I&amp;#39;ve included the source for this project on &lt;a href=&quot;https://gi
 
 &lt;p&gt;After you have saved your &lt;code&gt;.sailsrc&lt;/code&gt; file to your home directory, create a new sails project and fire it up! Open up your favorite web browser and go to &lt;code&gt;http://localhost:1337/&lt;/code&gt;&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;sails new ngSailsApp &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;ngSailsApp &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; sails lift&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;sails new ngSailsApp &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;ngSailsApp &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; sails lift&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;&lt;img src=&quot;/assets/images/sails-generate-frontend-angular/new_app_screenshot.jpg&quot; alt=&quot;Screenshot&quot;&gt;&lt;/p&gt;
 
 &lt;p&gt;Exit your Sails app with &lt;code&gt;ctrl-c&lt;/code&gt;. Now generate an api. For this example, we&amp;#39;ll generate an api around a movie class.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;sails generate api movie
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;sails generate api movie
 
 info: Created a new model &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;Movie&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; at api/models/Movie.js!
 info: Created a new controller &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;movie&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; at api/controllers/MovieController.js!
@@ -297,7 +376,7 @@ info: and will be available the next &lt;span class=&quot;nb&quot;&gt;time &lt;/
 
 &lt;p&gt;Modify your generated model file (in &lt;code&gt;api/models/Movie.js&lt;/code&gt;) to add some attributes.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;js&quot;&gt;&lt;span class=&quot;nx&quot;&gt;module&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;exports&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;nx&quot;&gt;module&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;exports&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
   &lt;span class=&quot;nx&quot;&gt;attributes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;nx&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;string&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
     &lt;span class=&quot;nx&quot;&gt;year&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;integer&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
@@ -362,7 +441,7 @@ $ npm install --save-dev sails-generate-model
 &lt;p&gt;Modify your &lt;code&gt;.sailsrc&lt;/code&gt; file to expose your project to the generator
 We are using a custom generator for the keyword &amp;#39;model&amp;#39;, so in our &lt;code&gt;.sailsrc&lt;/code&gt; JSON, we need to tell Sails to use the installed package to generate models when we &lt;code&gt;sails generate model &amp;lt;modelname&amp;gt;&lt;/code&gt;.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;json&quot;&gt;&lt;span class=&quot;lineno&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-json&quot; data-lang=&quot;json&quot;&gt;&lt;span class=&quot;lineno&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;2&lt;/span&gt;   &lt;span class=&quot;nt&quot;&gt;&amp;quot;generators&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;3&lt;/span&gt;     &lt;span class=&quot;nt&quot;&gt;&amp;quot;modules&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;4&lt;/span&gt;       &lt;span class=&quot;nt&quot;&gt;&amp;quot;model&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;sails-generate-model&amp;quot;&lt;/span&gt;
@@ -376,7 +455,7 @@ $ sails generate new model foo --coffee
 &lt;/code&gt;
 Now if you open up your &lt;code&gt;api/models&lt;/code&gt; folder, you should see a file &lt;code&gt;Foo.coffee&lt;/code&gt;:&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;coffeescript&quot;&gt;&lt;span class=&quot;lineno&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# Foo.coffee&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-coffeescript&quot; data-lang=&quot;coffeescript&quot;&gt;&lt;span class=&quot;lineno&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# Foo.coffee&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;2&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;3&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# @description :: TODO: You might write a short summary of how this model works and what it represents here.&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;4&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# @docs        :: http://sailsjs.org/#!documentation/models&lt;/span&gt;

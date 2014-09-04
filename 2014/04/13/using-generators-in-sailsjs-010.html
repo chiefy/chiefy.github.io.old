@@ -75,7 +75,7 @@ $ npm install --save-dev sails-generate-model
 <p>Modify your <code>.sailsrc</code> file to expose your project to the generator
 We are using a custom generator for the keyword &#39;model&#39;, so in our <code>.sailsrc</code> JSON, we need to tell Sails to use the installed package to generate models when we <code>sails generate model &lt;modelname&gt;</code>.</p>
 
-<div class="highlight"><pre><code class="json"><span class="lineno">1</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-json" data-lang="json"><span class="lineno">1</span> <span class="p">{</span>
 <span class="lineno">2</span>   <span class="nt">&quot;generators&quot;</span><span class="p">:</span> <span class="p">{</span>
 <span class="lineno">3</span>     <span class="nt">&quot;modules&quot;</span><span class="p">:</span> <span class="p">{</span>
 <span class="lineno">4</span>       <span class="nt">&quot;model&quot;</span> <span class="p">:</span> <span class="s2">&quot;sails-generate-model&quot;</span>
@@ -89,7 +89,7 @@ $ sails generate new model foo --coffee
 </code>
 Now if you open up your <code>api/models</code> folder, you should see a file <code>Foo.coffee</code>:</p>
 
-<div class="highlight"><pre><code class="coffeescript"><span class="lineno">1</span> <span class="c1"># Foo.coffee</span>
+<div class="highlight"><pre><code class="language-coffeescript" data-lang="coffeescript"><span class="lineno">1</span> <span class="c1"># Foo.coffee</span>
 <span class="lineno">2</span>  <span class="c1">#</span>
 <span class="lineno">3</span>  <span class="c1"># @description :: TODO: You might write a short summary of how this model works and what it represents here.</span>
 <span class="lineno">4</span>  <span class="c1"># @docs        :: http://sailsjs.org/#!documentation/models</span>

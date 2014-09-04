@@ -40,17 +40,17 @@
 
 <p>The first thing you will need to do is make sure to install Sails release-candidate 0.10.x.</p>
 
-<div class="highlight"><pre><code class="bash"><span class="nv">$ </span>npm install -g sails@beta</code></pre></div>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>npm install -g sails@beta</code></pre></div>
 
 <p>Install sails-generate-frontend-angular.</p>
 
-<div class="highlight"><pre><code class="bash"><span class="nv">$ </span>npm install -g sails-generate-frontend-angular</code></pre></div>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>npm install -g sails-generate-frontend-angular</code></pre></div>
 
 <p>The best way to use this generator is to have it kick off as part of Sails&#39; <code>generate-new</code> generator which runs when you execute <code>sails new &lt;appName&gt;</code>. In order for Sails to recognize this generator, we must modify our <code>.sailsrc</code> file.</p>
 
-<div class="highlight"><pre><code class="bash"><span class="nv">$ </span><span class="nb">cd</span> ~ <span class="o">&amp;&amp;</span> vim .sailsrc</code></pre></div>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span><span class="nb">cd</span> ~ <span class="o">&amp;&amp;</span> vim .sailsrc</code></pre></div>
 
-<div class="highlight"><pre><code class="json"><span class="lineno">1</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-json" data-lang="json"><span class="lineno">1</span> <span class="p">{</span>
 <span class="lineno">2</span>     <span class="nt">&quot;generators&quot;</span><span class="p">:</span> <span class="p">{</span>
 <span class="lineno">3</span>         <span class="nt">&quot;modules&quot;</span> <span class="p">:</span> <span class="p">{</span>
 <span class="lineno">4</span>             <span class="nt">&quot;frontend&quot;</span> <span class="p">:</span> <span class="s2">&quot;sails-generate-frontend-angular&quot;</span>
@@ -60,13 +60,13 @@
 
 <p>After you have saved your <code>.sailsrc</code> file to your home directory, create a new sails project and fire it up! Open up your favorite web browser and go to <code>http://localhost:1337/</code></p>
 
-<div class="highlight"><pre><code class="bash"><span class="nv">$ </span>sails new ngSailsApp <span class="o">&amp;&amp;</span> <span class="nb">cd </span>ngSailsApp <span class="o">&amp;&amp;</span> sails lift</code></pre></div>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>sails new ngSailsApp <span class="o">&amp;&amp;</span> <span class="nb">cd </span>ngSailsApp <span class="o">&amp;&amp;</span> sails lift</code></pre></div>
 
 <p><img src="/assets/images/sails-generate-frontend-angular/new_app_screenshot.jpg" alt="Screenshot"></p>
 
 <p>Exit your Sails app with <code>ctrl-c</code>. Now generate an api. For this example, we&#39;ll generate an api around a movie class.</p>
 
-<div class="highlight"><pre><code class="bash"><span class="nv">$ </span>sails generate api movie
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>sails generate api movie
 
 info: Created a new model <span class="o">(</span><span class="s2">&quot;Movie&quot;</span><span class="o">)</span> at api/models/Movie.js!
 info: Created a new controller <span class="o">(</span><span class="s2">&quot;movie&quot;</span><span class="o">)</span> at api/controllers/MovieController.js!
@@ -76,7 +76,7 @@ info: and will be available the next <span class="nb">time </span>you run <span 
 
 <p>Modify your generated model file (in <code>api/models/Movie.js</code>) to add some attributes.</p>
 
-<div class="highlight"><pre><code class="js"><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
   <span class="nx">attributes</span><span class="o">:</span> <span class="p">{</span>
     <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
     <span class="nx">year</span><span class="o">:</span> <span class="s1">&#39;integer&#39;</span><span class="p">,</span>
