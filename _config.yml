@@ -1,13 +1,65 @@
-name: "throw new Error(\"Chief\")"
+# SITE CONFIGURATION
+baseurl: "" # the subpath of your site, e.g. /blog/
+url: "http://chiefy.github.io" # the base hostname & protocol for your site
 title: "throw new Error(\"Chief\")"
-description: "I complain about JavaScript, Angular, Sails and other interwebs stuff"
-meta_description: "JavaScript, Sails, Node, Angular, Christopher Najewicz, chief"
 
+# THEME-SPECIFIC CONFIGURATION
+theme:
+  # Meta
+  title: "throw new Error(\"Chief\");"
+  avatar: chief_is_dangerous.jpg
+  gravatar: # email md5 hash
+  description: "I complain about technology." # used by search engines
+  meta_description: "JavaScript, Sails, Node, Angular, Christopher Najewicz, chief"
+  
+  # Header and footer text
+  header_text:
+  footer_text:
+  
+  # Icons
+  rss: true
+  email_address: # full email address, e.g. "sam@example.com"
+  behance:
+  bitbucket: 
+  dribbble: 
+  facebook: 
+  flickr: 
+  github: "chiefy"
+  google_plus: 
+  instagram: 
+  linkedin:  # full URL
+  pinterest: 
+  reddit: 
+  soundcloud: 
+  stack_exchange:  # full URL
+  steam: 
+  tumblr: "tacosandtiaras"
+  twitter: "tehsuck"
+  wordpress: 
+  youtube: 
+  
+  # Scripts
+  google_analytics: # tracking id, e.g. "UA-000000-01"
+  disqus_shortname: "chiefy"
+  
+  # Localization strings
+  str_follow_on: "Follow on"
+  str_rss_follow: "Follow RSS feed"
+  str_email: "Email"
+  str_next: "Next"
+  str_prev: "Prev"
+  str_continue_reading: "Continue reading"
+  
+  # Colors, typography and padding
+  # Open the "_sass > base" folder, and open "_variables.scss"
+
+# PAGINATION
+paginate: 5
+paginate_path: "blog/page:num"
+
+# BUILD SETTINGS
 markdown: redcarpet
 highlighter: pygments
-logo: false
-paginate: 15
-
-# Details for the RSS feed generator
-url:            'https://chiefy.github.io'
-author:         'Christopher "Chief" Najewicz'
+sass:
+  sass_dir: _sass
+  style: :compressed

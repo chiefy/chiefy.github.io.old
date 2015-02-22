@@ -1,9 +1,9 @@
 ---
 layout: post
-title: "Using SQLite and Sequelize with ActionHero"
+title: Using SQLite and Sequelize with ActionHero
 date: 2014-07-13 16:59:27
 tags: 
-  - node, 
+  - node
   - sqlite
   - sequelize
   - orm
@@ -255,11 +255,11 @@ exports.meatAdd = {
 
 After saving `actions/meat.js`, start ActionHero up again by issuing `npm start`. Using a utility (I used POSTman, you can use cURL etc.), send a `POST` to `http://localhost:8080/api/meatAdd` and add some meat!
 
-![POSTMan Example](/assets/images/postman_actionhero.jpg)
+![POSTMan Example](/img/postman_actionhero.jpg)
 
 Open up your favorite SQLite GUI and verify the record was stored:
 
-![Our Meat Exists](/assets/images/sqlite_browser.jpg)
+![Our Meat Exists](/img/sqlite_browser.jpg)
 
 Up next, we'll create an [EmberJS](http://emberjs.com) based UI for our meat app.
 

@@ -1,25 +1,14 @@
 ---
 layout: default
 ---
+<article {% if page.feature-img %}class="feature-image"{% endif %}>
 
-<main class="content" role="main">
-    <article class="post">
-        <header class="post-header">
-            <a id="blog-logo" href="{{site.baseurl}}">
-                {% if site.logo %}
-                    <img src="{{site.logo}}" alt="{{ site.name }}" />
-                {% else %}
-                    <span class="blog-title">{{ site.name }}</span>
-                {%endif%} 
-            </a>
-        </header>
+  <header style="background-image: url('{{ site.baseurl }}/{{ page.feature-img }}')">
+    <h1 class="title">{{ page.title }}</h1>
+  </header>
 
-        <h1 class="post-title">{{ page.title }}</h1>
+  <section class="post-content">
+    {{ content }}
+  </section>
 
-        <section class="post-content">
-            {{content}}
-        </section>
-
-    </article>
-
-</main>
+</article>

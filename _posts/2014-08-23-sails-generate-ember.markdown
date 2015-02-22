@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Using Sails Generators To Integrate An ember-cli Project"
+title: Using Sails Generators To Integrate An ember-cli Project
 date: 2014-09-03 18:00:00
 tags: 
   - sails
@@ -70,7 +70,7 @@ $ sails lift
 $ cd ember && ember serve
 {% endhighlight %}
 
-![Initial ember website](/assets/images/welcome_to_ember.png)
+![Initial ember website](/img/welcome_to_ember.png)
 
 ## Lessons Learned or How I Learned To Stop Worrying and Love The `broccoli`
 

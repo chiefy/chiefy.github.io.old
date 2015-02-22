@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Using generators in SailsJS 0.10.x"
+title: Using generators in SailsJS 0.10.x
 date: 2014-04-13 16:59:27
 tags: 
   - sails, 

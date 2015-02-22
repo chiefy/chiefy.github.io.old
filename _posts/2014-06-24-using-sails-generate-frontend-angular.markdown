@@ -1,7 +1,7 @@
 ---
 layout: post
-title:  "Easily create Angular-based frontend scaffolding for Sails"
-date:   2014-06-24 05:00:00
+title: Easily create Angular-based frontend scaffolding for Sails
+date: 2014-06-24 05:00:00
 tags:
   - angular
   - sails
@@ -44,7 +44,7 @@ After you have saved your `.sailsrc` file to your home directory, create a new s
 $ sails new ngSailsApp && cd ngSailsApp && sails lift
 {% endhighlight %}
 
-![Screenshot](/assets/images/sails-generate-frontend-angular/new_app_screenshot.jpg)
+![Screenshot](/img/sails-generate-frontend-angular/new_app_screenshot.jpg)
 
 Exit your Sails app with `ctrl-c`. Now generate an api. For this example, we'll generate an api around a movie class.
 {% highlight bash %}
@@ -72,7 +72,7 @@ module.exports = {
 
 Once again, fire up the Sails app with `sails lift`, and open a browser to `http://localhost:1337/#/movies`. Here you will see a very, very, very unstyled, basic CRUD scaffold built with [Sails](http://sailsjs.org/), [Angular](https://angularjs.org/), [RESTAngular](https://github.com/mgonto/restangular/), and [ui-router](http://angular-ui.github.io/ui-router/site/#/api/ui.router).
 
-![CRUD Movie Example](/assets/images/sails-generate-frontend-angular/new_movie_crud.gif)
+![CRUD Movie Example](/img/sails-generate-frontend-angular/new_movie_crud.gif)
 
 Please feel free to check out the [code on github](https://github.com/chiefy/sails-generate-frontend-angular) and make any suggestions you feel would improve the project.
 
