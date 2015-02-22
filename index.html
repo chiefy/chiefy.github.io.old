@@ -1,115 +1,252 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-        <title>throw new Error("Chief") - I complain about JavaScript, Angular, Sails and other interwebs stuff</title>
-        <meta name="description" content="JavaScript, Sails, Node, Angular, Christopher Najewicz, chief" />
-        <meta name="HandheldFriendly" content="True" />
-        <meta name="MobileOptimized" content="320" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" type="text/css" href="/assets/css/normalize.css" />
-        <link rel="stylesheet" type="text/css" href="/assets/css/screen.css" />
-        <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
-        <!-- This is for syntax highlight -->
-        <link rel="stylesheet" type="text/css" href="/assets/css/syntax.css">
-        <!-- Customisation  -->
-        <link rel="stylesheet" type="text/css" href="/assets/css/main.css" />
-    </head>
-    <body class="home-template">
-        <header class="site-head" >
-    <div class="vertical">
-        <div class="site-head-content" class="inner">
-            
-            <h1 class="blog-title">throw new Error("Chief")</h1>
-            <h2 class="blog-description"> 
-                I complain about JavaScript, Angular, Sails and other interwebs stuff 
-            </h2>
-        </div>
-    </div>
+<html class="no-js">
+
+  <head>
+	<meta charset="utf-8">
+	<title> throw new Error("Chief");</title>
+	<meta name="description" content="I complain about technology.">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<!-- CSS -->
+	<link rel="stylesheet" href="/css/main.css">
+	
+	<!--Favicon-->
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+	
+	<!-- Canonical -->
+	<link rel="canonical" href="http://chiefy.github.io/">
+	
+	<!-- RSS -->
+	<link rel="alternate" type="application/atom+xml" title="throw new Error("Chief");" href="http://chiefy.github.io/feed.xml" />
+	
+	<!-- Font Awesome -->
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+	
+	<!-- Google Fonts -->
+	<link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,700italic,400italic" rel="stylesheet" type="text/css">
+	
+	<!-- Google Analytics -->
+	
+</head>
+
+
+  <body>
+    <header class="site-header">
+
+	<div class="branding">
+		
+		<a href="/">
+      <img class="avatar" src="/img/chief_is_dangerous.jpg" alt=""/>
+    </a>
+		
+		
+		<h1 class="site-title">
+			<a href="/">throw new Error("Chief");</a>
+		</h1>
+	</div>
+	
+	<nav class="site-nav">
+		<ul>
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+
+			<!-- Social icons from Font Awesome, if enabled -->
+			
+<li>
+	<a href="http://chiefy.github.io/feed.xml" title="Follow RSS feed">
+		<i class="fa fa-fw fa-rss"></i>
+	</a>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li>
+	<a href="https://github.com/chiefy" title="Follow on GitHub">
+		<i class="fa fa-fw fa-github"></i>
+	</a>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li>
+	<a href="https://tacosandtiaras.tumblr.com/" title="Follow on Tumblr">
+		<i class="fa fa-fw fa-tumblr"></i>
+	</a>
+</li>
+
+
+
+<li>
+	<a href="https://twitter.com/tehsuck" title="Follow on Twitter">
+		<i class="fa fa-fw fa-twitter"></i>
+	</a>
+</li>
+
+
+
+
+
+		</ul>
+	</nav>
+	
 </header>
 
-<main class="content" role="main">
 
+    <div class="content">
+      <div class="home">
+
+  
+
+  <div class="posts">
     
-
-    <article class="post">
-        <header class="post-header">
-            <span class="post-meta"><time datetime="2014-09-03">03 Sep 2014</time> </span>
-            <h2 class="post-title"><a href="/2014/09/03/sails-generate-ember.html">Using Sails Generators To Integrate An ember-cli Project</a></h2>
-
-        </header>
-        <section class="post-excerpt">
-            <p>Recently I have been trying to learn <a href="http://emberjs.com/">Ember</a> and I came across the amazing command line utility <a href="http://www.ember-cli.com/"><code>ember-cli</code></a> written by <a href="https://github.com/stefanpenner">Stefan Penner</a>. <code>ember-cli</code> is the missing utility belt for ember based projects. Among its features is a generator that creates a strongly opinionated project structure and build chain (<code>ember</code> is strongly opinionated - <a href="http://confy.wecode.io/talks/2013/arrrrcamp/ember-on-rails-convention-over-configuration-on-both-sides-of-the-tubes">convention over configuration</a>). <code>ember-cli</code> uses an <a href="http://esnext.github.io/es6-module-transpiler/">ES6 module transpiler</a> allowing users to use next-gen ES6 module support in their current projects today. It also utilizes <a href="https://github.com/broccolijs/broccoli"><code>broccoli</code></a> for build tooling as opposed to <code>grunt</code> which Sails seems to favor. More on that later.</p>
-
-        </section>
-    </article>
-
+    <div class="post-teaser">
     
-
-    <article class="post">
-        <header class="post-header">
-            <span class="post-meta"><time datetime="2014-07-13">13 Jul 2014</time> </span>
-            <h2 class="post-title"><a href="/2014/07/13/using-sqlite-sequelize-with-actionhero.html">Using SQLite and Sequelize with ActionHero</a></h2>
-
-        </header>
-        <section class="post-excerpt">
-            <p>This past weekend I was checking out <a href="http://actionherojs.com/">ActionHero</a>, a pretty nice API framework written in Node.js which claims to be: &quot;Reusable, Scalable, and Quick!&quot; I was setting up a quick example and I didn&#39;t want to have to connect to a MySQL or Postgres DB. ActionHero comes with <code>fakeredis</code>, an in-memory pseudo-redis store, which is great for experimenting but I wanted to use a local disk store. A few google searches didn&#39;t turn up too much on how to use SQLite with ActionHero, so here we go.</p>
-
-        </section>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <span class="post-meta"><time datetime="2014-06-24">24 Jun 2014</time> </span>
-            <h2 class="post-title"><a href="/2014/06/24/using-sails-generate-frontend-angular.html">Easily create Angular-based frontend scaffolding for Sails</a></h2>
-
-        </header>
-        <section class="post-excerpt">
-            <p>SailsJS 0.10 introduces the concept of generators, a layer to allow users to create their own templates around the various pieces of a SailsJS project. One of the generators, sails-generate-frontend will generate all your front-end assets. I have created sails-generate-frontend-angular, a generator to override the default frontend generator and create a simple scaffold for an Angular frontend.</p>
-
-        </section>
-    </article>
-
-    
-
-    <article class="post">
-        <header class="post-header">
-            <span class="post-meta"><time datetime="2014-04-13">13 Apr 2014</time> </span>
-            <h2 class="post-title"><a href="/2014/04/13/using-generators-in-sailsjs-010.html">Using generators in SailsJS 0.10.x</a></h2>
-
-        </header>
-        <section class="post-excerpt">
-            <p>Sails&#39; new <a href="https://github.com/balderdashy/sails/tree/v0.10.0-rc5">release candidate</a> is a pretty big shift from the 0.9 version, and in a good way.</p>
-
-        </section>
-    </article>
-
-    
-
-    <nav class="pagination" role="pagination">
-
+      <header>
+        <h1>
+          <a class="post-link" href="/2015/02/24/up-and-running-w-boot2docker-fig-packer.html">Up & Running With boot2docker, Fig and Packer on OSX</a>
+        </h1>
         
+        <p class="meta">February 24, 2015</p>
+      </header>
 
-        <span class="page-number"> Page 1 of 1 </span>
+      <div class="excerpt">
+        <p>Recently my job has been focusing a bit more on the devops side of things and I have been trying to learn and use docker via boot2docker on OSX. During the process I kept wishing that someone had written about some of the issues I was running into such that I could easily letmegooglethatforyou or SO the answers in a non day-killing manner. Please keep in mind that this stuff moves extremely fast (or slow depending on the project), so be sure to check out the issue links and check on the status before yelling at me that it&#39;s already been fixed. </p>
+
+
+        <a class="button" href="/2015/02/24/up-and-running-w-boot2docker-fig-packer.html">Continue reading</a>
+      </div>
+      
+    </div>
+    
+    <div class="post-teaser">
+    
+      <header>
+        <h1>
+          <a class="post-link" href="/2014/09/03/sails-generate-ember.html">Using Sails Generators To Integrate An ember-cli Project</a>
+        </h1>
         
-         
-    </nav>
+        <p class="meta">September 3, 2014</p>
+      </header>
+
+      <div class="excerpt">
+        <p>Recently I have been trying to learn <a href="http://emberjs.com/">Ember</a> and I came across the amazing command line utility <a href="http://www.ember-cli.com/"><code>ember-cli</code></a> written by <a href="https://github.com/stefanpenner">Stefan Penner</a>. <code>ember-cli</code> is the missing utility belt for ember based projects. Among its features is a generator that creates a strongly opinionated project structure and build chain (<code>ember</code> is strongly opinionated - <a href="http://confy.wecode.io/talks/2013/arrrrcamp/ember-on-rails-convention-over-configuration-on-both-sides-of-the-tubes">convention over configuration</a>). <code>ember-cli</code> uses an <a href="http://esnext.github.io/es6-module-transpiler/">ES6 module transpiler</a> allowing users to use next-gen ES6 module support in their current projects today. It also utilizes <a href="https://github.com/broccolijs/broccoli"><code>broccoli</code></a> for build tooling as opposed to <code>grunt</code> which Sails seems to favor. More on that later.</p>
+
+
+        <a class="button" href="/2014/09/03/sails-generate-ember.html">Continue reading</a>
+      </div>
+      
+    </div>
+    
+    <div class="post-teaser">
+    
+      <header>
+        <h1>
+          <a class="post-link" href="/2014/07/13/using-sqlite-sequelize-with-actionhero.html">Using SQLite and Sequelize with ActionHero</a>
+        </h1>
+        
+        <p class="meta">July 13, 2014</p>
+      </header>
+
+      <div class="excerpt">
+        <p>This past weekend I was checking out <a href="http://actionherojs.com/">ActionHero</a>, a pretty nice API framework written in Node.js which claims to be: &quot;Reusable, Scalable, and Quick!&quot; I was setting up a quick example and I didn&#39;t want to have to connect to a MySQL or Postgres DB. ActionHero comes with <code>fakeredis</code>, an in-memory pseudo-redis store, which is great for experimenting but I wanted to use a local disk store. A few google searches didn&#39;t turn up too much on how to use SQLite with ActionHero, so here we go.</p>
+
+
+        <a class="button" href="/2014/07/13/using-sqlite-sequelize-with-actionhero.html">Continue reading</a>
+      </div>
+      
+    </div>
+    
+    <div class="post-teaser">
+    
+      <header>
+        <h1>
+          <a class="post-link" href="/2014/06/24/using-sails-generate-frontend-angular.html">Easily create Angular-based frontend scaffolding for Sails</a>
+        </h1>
+        
+        <p class="meta">June 24, 2014</p>
+      </header>
+
+      <div class="excerpt">
+        <p>SailsJS 0.10 introduces the concept of generators, a layer to allow users to create their own templates around the various pieces of a SailsJS project. One of the generators, sails-generate-frontend will generate all your front-end assets. I have created sails-generate-frontend-angular, a generator to override the default frontend generator and create a simple scaffold for an Angular frontend.</p>
+
+
+        <a class="button" href="/2014/06/24/using-sails-generate-frontend-angular.html">Continue reading</a>
+      </div>
+      
+    </div>
+    
+    <div class="post-teaser">
+    
+      <header>
+        <h1>
+          <a class="post-link" href="/2014/04/13/using-generators-in-sailsjs-010.html">Using generators in SailsJS 0.10.x</a>
+        </h1>
+        
+        <p class="meta">April 13, 2014</p>
+      </header>
+
+      <div class="excerpt">
+        <p>Sails&#39; new <a href="https://github.com/balderdashy/sails/tree/v0.10.0-rc5">release candidate</a> is a pretty big shift from the 0.9 version, and in a good way.</p>
+
+
+        <a class="button" href="/2014/04/13/using-generators-in-sailsjs-010.html">Continue reading</a>
+      </div>
+      
+    </div>
+    
+  </div>
+
+  
+</div>
+
+    </div>
+
     
 
-</main>
+    <script type="text/javascript" src="/js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+    <script async defer id="github-bjs" src="//buttons.github.io/buttons.js"></script>
 
-        <footer class="site-footer">
-            <a class="subscribe icon-feed" href="rss.xml"><span class="tooltip">Subscribe!</span></a>
-            <div class="inner">
-                <section class="copyright">All content copyright <a href="">throw new Error("Chief")</a> &copy;  &bull; All rights reserved.</section>
-            </div>
-        </footer>
-        <script type="text/javascript" src="/assets/js/jquery-1.10.2.min.js"></script>
-        <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
-        <script type="text/javascript" src="/assets/js/index.js"></script>
-        <script async defer id="github-bjs" src="//buttons.github.io/buttons.js"></script>
-    </body>
+  </body>
+
 </html>

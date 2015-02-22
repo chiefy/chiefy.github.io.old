@@ -6,45 +6,54 @@
   xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/">
   <channel>
     <title>throw new Error(&quot;Chief&quot;)</title>
-    <link>https://chiefy.github.io</link>
-    <description>I complain about JavaScript, Angular, Sails and other interwebs stuff</description>
-    <pubDate>Wed, 03 Sep 2014 14:00:00 -0400</pubDate>
+    <link>http://chiefy.github.io</link>
+    <description>RSS feed for </description>
+    <pubDate>Tue, 24 Feb 2015 07:00:00 -0500</pubDate>
+    <item>
+      <title>Up &amp; Running With boot2docker, Fig and Packer on OSX</title>
+      <link>http://chiefy.github.io/2015/02/24/up-and-running-w-boot2docker-fig-packer.html</link>
+      <description>&lt;p&gt;Recently my job has been focusing a bit more on the devops side of things and I have been trying to learn and use docker via boot2docker on OSX. During the process I kept wishing that someone had written about some of the issues I was running into such that I could easily letmegooglethatforyou or SO the answers in a non day-killing manner. Please keep in mind that this stuff moves extremely fast (or slow depending on the project), so be sure to check out the issue links and check on the status before yelling at me that it&amp;#39;s already been fixed. &lt;/p&gt;
+</description>
+      <pubDate>Tue, 24 Feb 2015 07:00:00 -0500</pubDate>
+      <guid>http://chiefy.github.io/2015/02/24/up-and-running-w-boot2docker-fig-packer.html</guid>
+      <dc:date>2015-02-24T07:00:00-05:00</dc:date>
+    </item>
     <item>
       <title>Using Sails Generators To Integrate An ember-cli Project</title>
-      <link>https://chiefy.github.io/2014/09/03/sails-generate-ember.html</link>
+      <link>http://chiefy.github.io/2014/09/03/sails-generate-ember.html</link>
       <description>&lt;p&gt;Recently I have been trying to learn &lt;a href=&quot;http://emberjs.com/&quot;&gt;Ember&lt;/a&gt; and I came across the amazing command line utility &lt;a href=&quot;http://www.ember-cli.com/&quot;&gt;&lt;code&gt;ember-cli&lt;/code&gt;&lt;/a&gt; written by &lt;a href=&quot;https://github.com/stefanpenner&quot;&gt;Stefan Penner&lt;/a&gt;. &lt;code&gt;ember-cli&lt;/code&gt; is the missing utility belt for ember based projects. Among its features is a generator that creates a strongly opinionated project structure and build chain (&lt;code&gt;ember&lt;/code&gt; is strongly opinionated - &lt;a href=&quot;http://confy.wecode.io/talks/2013/arrrrcamp/ember-on-rails-convention-over-configuration-on-both-sides-of-the-tubes&quot;&gt;convention over configuration&lt;/a&gt;). &lt;code&gt;ember-cli&lt;/code&gt; uses an &lt;a href=&quot;http://esnext.github.io/es6-module-transpiler/&quot;&gt;ES6 module transpiler&lt;/a&gt; allowing users to use next-gen ES6 module support in their current projects today. It also utilizes &lt;a href=&quot;https://github.com/broccolijs/broccoli&quot;&gt;&lt;code&gt;broccoli&lt;/code&gt;&lt;/a&gt; for build tooling as opposed to &lt;code&gt;grunt&lt;/code&gt; which Sails seems to favor. More on that later.&lt;/p&gt;
 </description>
       <pubDate>Wed, 03 Sep 2014 14:00:00 -0400</pubDate>
-      <guid>https://chiefy.github.io/2014/09/03/sails-generate-ember.html</guid>
+      <guid>http://chiefy.github.io/2014/09/03/sails-generate-ember.html</guid>
       <dc:date>2014-09-03T14:00:00-04:00</dc:date>
     </item>
     <item>
       <title>Using SQLite and Sequelize with ActionHero</title>
-      <link>https://chiefy.github.io/2014/07/13/using-sqlite-sequelize-with-actionhero.html</link>
+      <link>http://chiefy.github.io/2014/07/13/using-sqlite-sequelize-with-actionhero.html</link>
       <description>&lt;p&gt;This past weekend I was checking out &lt;a href=&quot;http://actionherojs.com/&quot;&gt;ActionHero&lt;/a&gt;, a pretty nice API framework written in Node.js which claims to be: &amp;quot;Reusable, Scalable, and Quick!&amp;quot; I was setting up a quick example and I didn&amp;#39;t want to have to connect to a MySQL or Postgres DB. ActionHero comes with &lt;code&gt;fakeredis&lt;/code&gt;, an in-memory pseudo-redis store, which is great for experimenting but I wanted to use a local disk store. A few google searches didn&amp;#39;t turn up too much on how to use SQLite with ActionHero, so here we go.&lt;/p&gt;
 </description>
       <pubDate>Sun, 13 Jul 2014 12:59:27 -0400</pubDate>
-      <guid>https://chiefy.github.io/2014/07/13/using-sqlite-sequelize-with-actionhero.html</guid>
+      <guid>http://chiefy.github.io/2014/07/13/using-sqlite-sequelize-with-actionhero.html</guid>
       <dc:date>2014-07-13T12:59:27-04:00</dc:date>
     </item>
     <item>
       <title>Easily create Angular-based frontend scaffolding for Sails</title>
-      <link>https://chiefy.github.io/2014/06/24/using-sails-generate-frontend-angular.html</link>
+      <link>http://chiefy.github.io/2014/06/24/using-sails-generate-frontend-angular.html</link>
       <description>&lt;p&gt;SailsJS 0.10 introduces the concept of generators, a layer to allow users to create their own templates around the various pieces of a SailsJS project. One of the generators, sails-generate-frontend will generate all your front-end assets. I have created sails-generate-frontend-angular, a generator to override the default frontend generator and create a simple scaffold for an Angular frontend.&lt;/p&gt;
 </description>
       <pubDate>Tue, 24 Jun 2014 01:00:00 -0400</pubDate>
-      <guid>https://chiefy.github.io/2014/06/24/using-sails-generate-frontend-angular.html</guid>
+      <guid>http://chiefy.github.io/2014/06/24/using-sails-generate-frontend-angular.html</guid>
       <dc:date>2014-06-24T01:00:00-04:00</dc:date>
     </item>
     <item>
       <title>Using generators in SailsJS 0.10.x</title>
-      <link>https://chiefy.github.io/2014/04/13/using-generators-in-sailsjs-010.html</link>
+      <link>http://chiefy.github.io/2014/04/13/using-generators-in-sailsjs-010.html</link>
       <description>&lt;p&gt;Sails&amp;#39; new &lt;a href=&quot;https://github.com/balderdashy/sails/tree/v0.10.0-rc5&quot;&gt;release candidate&lt;/a&gt; is a pretty big shift from the 0.9 version, and in a good way.&lt;/p&gt;
 </description>
       <pubDate>Sun, 13 Apr 2014 12:59:27 -0400</pubDate>
-      <guid>https://chiefy.github.io/2014/04/13/using-generators-in-sailsjs-010.html</guid>
+      <guid>http://chiefy.github.io/2014/04/13/using-generators-in-sailsjs-010.html</guid>
       <dc:date>2014-04-13T12:59:27-04:00</dc:date>
     </item>
-    <dc:date>2014-09-03T14:00:00-04:00</dc:date>
+    <dc:date>2015-02-24T07:00:00-05:00</dc:date>
   </channel>
 </rss>

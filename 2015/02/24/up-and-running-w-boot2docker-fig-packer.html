@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html class="no-js">
+
+  <head>
+	<meta charset="utf-8">
+	<title>Up & Running With boot2docker, Fig and Packer on OSX | throw new Error("Chief");</title>
+	<meta name="description" content="Recently my job has been focusing a bit more on the devops side of things and I have been trying to learn and use docker via boot2docker on OSX. During the p...">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<!-- CSS -->
+	<link rel="stylesheet" href="/css/main.css">
+	
+	<!--Favicon-->
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+	
+	<!-- Canonical -->
+	<link rel="canonical" href="http://chiefy.github.io/2015/02/24/up-and-running-w-boot2docker-fig-packer.html">
+	
+	<!-- RSS -->
+	<link rel="alternate" type="application/atom+xml" title="throw new Error("Chief");" href="http://chiefy.github.io/feed.xml" />
+	
+	<!-- Font Awesome -->
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+	
+	<!-- Google Fonts -->
+	<link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,700italic,400italic" rel="stylesheet" type="text/css">
+	
+	<!-- Google Analytics -->
+	
+</head>
+
+
+  <body>
+    <header class="site-header">
+
+	<div class="branding">
+		
+		<a href="/">
+      <img class="avatar" src="/img/chief_is_dangerous.jpg" alt=""/>
+    </a>
+		
+		
+		<h1 class="site-title">
+			<a href="/">throw new Error("Chief");</a>
+		</h1>
+	</div>
+	
+	<nav class="site-nav">
+		<ul>
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+
+			<!-- Social icons from Font Awesome, if enabled -->
+			
+<li>
+	<a href="http://chiefy.github.io/feed.xml" title="Follow RSS feed">
+		<i class="fa fa-fw fa-rss"></i>
+	</a>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li>
+	<a href="https://github.com/chiefy" title="Follow on GitHub">
+		<i class="fa fa-fw fa-github"></i>
+	</a>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li>
+	<a href="https://tacosandtiaras.tumblr.com/" title="Follow on Tumblr">
+		<i class="fa fa-fw fa-tumblr"></i>
+	</a>
+</li>
+
+
+
+<li>
+	<a href="https://twitter.com/tehsuck" title="Follow on Twitter">
+		<i class="fa fa-fw fa-twitter"></i>
+	</a>
+</li>
+
+
+
+
+
+		</ul>
+	</nav>
+	
+</header>
+
+
+    <div class="content">
+      <article >
+
+  <header style="background-image: url('/')">
+    <h1 class="title">Up & Running With boot2docker, Fig and Packer on OSX</h1>
+    
+    <p class="meta">
+    February 24, 2015
+    
+    </p>
+  </header>
+
+  <section class="post-content">
+    <p>Recently my job has been focusing a bit more on the devops side of things and I have been trying to learn and use docker via boot2docker on OSX. During the process I kept wishing that someone had written about some of the issues I was running into such that I could easily letmegooglethatforyou or SO the answers in a non day-killing manner. Please keep in mind that this stuff moves extremely fast (or slow depending on the project), so be sure to check out the issue links and check on the status before yelling at me that it&#39;s already been fixed. </p>
+
+<h2>boot2docker</h2>
+
+<blockquote>
+<p><a href="http://boot2docker.io/">boot2docker</a> is a lightweight Linux distribution based on Tiny Core Linux made specifically to run Docker containers. It runs completely from RAM, weighs ~27MB and boots in ~5s (YMMV).</p>
+</blockquote>
+
+<p>In case you aren&#39;t aware, or you&#39;ve been living under a devops rock, <a href="http://docker.io">Docker</a> is the new hotness in virtualization and container technology. I&#39;m not going to get into it here, but there are a zillion posts around the interwebs describing what it is, and what it can help you accomplish for you. </p>
+
+<p>Because Docker requires a specific Linux Kernel, <a href="https://docs.docker.com/installation/mac/">you can&#39;t use Docker exclusively with Darwin/OSX</a>, you must use a proxy VM to manage your Docker images and containers. This is where boot2docker comes in.</p>
+
+<p>So instead of having to ssh into a VM and manage your Docker images and containers (potentially a pretty big PITA), boot2docker provides a proxy layer, so you can use docker commands in your local shell just as if you were the docker host. At the time of writing here are versions of these programs I was using:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>docker --version <span class="o">&amp;&amp;</span> boot2docker version <span class="o">&amp;&amp;</span> uname -a
+Docker version 1.5.0, build a8a31ef
+Boot2Docker-cli version: v1.5.0
+Git commit: ccd9032
+Darwin cnaje1ML1 13.4.0 Darwin Kernel Version 13.4.0: Wed Dec <span class="m">17</span> 19:05:52 PST 2014<span class="p">;</span> root:xnu-2422.115.10~1/RELEASE_X86_64 x86_64</code></pre></div>
+
+<p>Along with this great convenience, comes more complexity, and with more complexity, comes various issues when trying to use Docker-dependent programs and utilities.</p>
+
+<h3>Some Important <code>boot2docker</code> Commands</h3>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>boot2docker init <span class="o">&amp;&amp;</span> boot2docker up</code></pre></div>
+
+<p>To get things started, you will need to create/init the boot2docker VM, and then actually start the instance.</p>
+
+<p>See-also: <code>boot2docker save</code>, <code>boot2docker down</code>, <code>boot2docker restart</code> etc. which will manage the state of your VM.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>boot2docker ip</code></pre></div>
+
+<p>When you use boot2docker, it spawns a new VM instance through VirtualBox. This new VM exposes it&#39;s network interface, and if you will be creating any Docker containers which expose network services (you proabbly will), you need to know the VM&#39;s IP address in order to interface with them. The <code>ip</code> command, like it&#39;s name implies, simply prints out the IP address assigned to the VM.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>boot2docker shellinit</code></pre></div>
+
+<p>To get your shell setup properly, you will need to run <code>shellinit</code> at some point (obviously after you have <code>boot2docker up</code>).</p>
+
+<p>Depending on how your shell is setup, it might be handy to add this to your <code>.bashrc</code> or <code>.zshrc</code>:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/zsh</span>
+...
+boot2docker shellinit <span class="o">&amp;&amp;</span> <span class="nb">export </span><span class="nv">DOCKER_IP</span><span class="o">=</span><span class="k">$(</span>boot2docker ip<span class="k">)</span>
+...</code></pre></div>
+
+<h2>Fig</h2>
+
+<blockquote>
+<p>Fast, isolated development environments using Docker.</p>
+</blockquote>
+
+<p>When you are developing an application using docker containers, you are going to need something to help you orchestrate containers. There are plenty of great write-ups on using Fig, so I will not go into that here. Fig is a great orchestration toolset and was <a href="http://venturebeat.com/2014/07/22/docker-buys-orchard-a-2-man-startup-with-a-cloud-service-for-running-docker-friendly-apps/">recently purchased by Docker</a>. </p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>fig --version
+fig 1.0.1</code></pre></div>
+
+<h4>Shared Data Volumes</h4>
+
+<p>One of the first issues I ran into using fig and boot2docker was the issue of mounting writable shared volumes with the volumes_from config. The problem is that when boot2docker mounts volumes, it uses vboxfs, and causes several problems when the host container tries to write or change permissions to the shared volume. </p>
+
+<p>If you are interested, there are various <a href="https://github.com/docker/docker/issues/4023">threads</a> on <a href="https://github.com/boot2docker/boot2docker/issues/587#issuecomment-66935011">issues</a> relating to boot2docker / vboxfs / shared volumes / permissions etc. It&#39;s actually a lot to sort through, and I spent a few days trying to find a solution to the issue I was running into.</p>
+
+<p>I ended up using GitHub user <a href="https://github.com/paolomainardi">@paolomainardi</a>&#39;s solution to nix using VirtualBox&#39;s vboxfs and <a href="https://github.com/boot2docker/boot2docker/issues/587#issuecomment-66935011">instead expose folders via NFS</a>. </p>
+
+<p>First, modify <code>/etc/exports</code>:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">/Users -mapall<span class="o">=[</span>youruser<span class="o">]</span>:<span class="o">[</span>yourgroup<span class="o">]</span> <span class="o">[</span>boot2dockerip<span class="o">]</span></code></pre></div>
+
+<p>After you save, you  may or may not need to sudo /sbin/nfsd restart to restart the NFS daemon in OSX to pick up the changes.</p>
+
+<p>Then <code>boot2docker ssh</code> into your VM, and run the following:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">sudo umount /Users
+sudo /usr/local/etc/init.d/nfs-client start
+sudo mount 192.168.59.3:/Users /Users -o rw,async,noatime,rsize<span class="o">=</span>32768,wsize<span class="o">=</span>32768,proto<span class="o">=</span>tcp</code></pre></div>
+
+<p>Now when you need your <code>Dockerfile</code> to change permissions on files mounted via data volumes, it should take. This approach also helps another issue I ran into while running <code>packer</code>.</p>
+
+<h3>Dangling images, or, dockerberries</h3>
+
+<p>One thing you&#39;ll notice when you start working with Fig is that you will start generating a lot of intermediate images that for whatever reason, don&#39;t get cleaned up by fig clean. I have a feeling that <a href="https://github.com/docker/docker/issues/928">the next release of docker will include a command to do this</a>, but for now to remedy this, you can <a href="https://www.calazan.com/docker-cleanup-commands/">try this tip</a>:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>docker rmi <span class="k">$(</span>docker images -q -f <span class="nv">dangling</span><span class="o">=</span><span class="nb">true</span><span class="k">)</span></code></pre></div>
+
+<p>or to force cleanup:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>docker rmi -f <span class="k">$(</span>docker images -q -f <span class="nv">dangling</span><span class="o">=</span><span class="nb">true</span><span class="k">)</span></code></pre></div>
+
+<p>even better add this to your aliases:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">alias </span><span class="nv">docker_clean_danglers</span><span class="o">=</span><span class="s2">&quot;docker rmi -f $(docker images -q -f dangling=true)&quot;</span></code></pre></div>
+
+<h2>Packer</h2>
+
+<blockquote>
+<p><a href="http://packer.io">Packer</a> is a tool for creating identical machine images for multiple platforms from a single source configuration.</p>
+</blockquote>
+
+<p>Packer is a great utility, from HashiCorp, the makers of <a href="http://vagrantup.com">Vagrant</a>, to use configuration files to generate multiple images for different services such as: Amazon EC2, Docker and Vagrant. Need to generate an Amazon AMI, but also want a Docker image you can use elsewhere or push to a registry? Packer is the tool for the job.</p>
+
+<p>I quickly ran into a weird issue running <code>packer build</code> using a shell provisioner with <code>inline</code>. My builder would start, and then mysteriously just sit there and hang when it tried to copy the script. As it turns out, part of the issue is because of <a href="https://github.com/mitchellh/packer/issues/1752">a bug using Packer with the latest version of Docker (1.4+)</a>. I didn&#39;t want to downgrade Docker to 1.3, so I <a href="https://github.com/mariussturm/packer/commit/3a286ab6bdba7b8e5bf6a43c357a0ffeacd3dc97">incorporated the fix</a> locally, and re-built the packer binaries for OSX_x64. </p>
+
+<p>As of this writing, Packer still hasn&#39;t merged the patch, but you can <a href="https://www.dropbox.com/s/4v5jvvxj1k5mpst/packer-osx-patched-0.7.5.zip?dl=1">download my OSX binaries</a> (install them to <code>/usr/local/bin</code>), or <a href="https://github.com/mitchellh/packer#developing-packer">build them yourself</a> if you want to get up and running with <em>Go</em>. </p>
+
+<p>The second issue is that packer stores it&#39;s temporary files and folders into <code>/var/folders</code> on OSX. You&#39;ll note from my findings with Fig above, by default boot2docker mounts <code>/Users</code>, and that&#39;s it, so there is no way for Docker to get provisioned by anything Packer wants to send to it since the boot2docker VM can&#39;t read <code>/var/folders</code>.</p>
+
+<p>There are <a href="https://github.com/mitchellh/packer/issues/398">several</a> <a href="https://github.com/mitchellh/packer/issues/1888">issues</a> that have been reported around this, and it looks like most people solved it by setting their <code>TMPDIR</code> environment variable to something inside their <code>/Users</code> folder, like: <code>/Users/myuser/tmp</code> since that folder gets mounted in the boot2docker VM. </p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ TMPDIR</span><span class="o">=</span>/Users/chief/tmp packer build mybuild.json</code></pre></div>
+
+  </section>
+  
+</article>
+
+<!-- Disqus -->
+
+<div class="comments">
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+	var disqus_shortname = 'chiefy'; 
+	(function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+    </div>
+
+    
+
+    <script type="text/javascript" src="/js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+    <script async defer id="github-bjs" src="//buttons.github.io/buttons.js"></script>
+
+  </body>
+
+</html>

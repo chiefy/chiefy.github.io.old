@@ -1,42 +1,150 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-        <title>throw new Error("Chief") - I complain about JavaScript, Angular, Sails and other interwebs stuff</title>
-        <meta name="description" content="JavaScript, Sails, Node, Angular, Christopher Najewicz, chief" />
-        <meta name="HandheldFriendly" content="True" />
-        <meta name="MobileOptimized" content="320" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" type="text/css" href="/assets/css/normalize.css" />
-        <link rel="stylesheet" type="text/css" href="/assets/css/screen.css" />
-        <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
-        <!-- This is for syntax highlight -->
-        <link rel="stylesheet" type="text/css" href="/assets/css/syntax.css">
-        <!-- Customisation  -->
-        <link rel="stylesheet" type="text/css" href="/assets/css/main.css" />
-    </head>
-    <body class="home-template">
-        <main class="content" role="main">
+<html class="no-js">
 
-    <article class="post">
-        <header class="post-header">
-            <a id="blog-logo" href="">
-                
-                    <span class="blog-title">throw new Error("Chief")</span>
-                 
-            </a>
-        </header>
-        
-        <span class="post-meta">
-        	<time datetime="2014-09-03">03 Sep 2014</time>
-        	
-       	</span>
+  <head>
+	<meta charset="utf-8">
+	<title>Using Sails Generators To Integrate An ember-cli Project | throw new Error("Chief");</title>
+	<meta name="description" content="Recently I have been trying to learn Ember and I came across the amazing command line utility ember-cli written by Stefan Penner. ember-cli is the missing ut...">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<!-- CSS -->
+	<link rel="stylesheet" href="/css/main.css">
+	
+	<!--Favicon-->
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+	
+	<!-- Canonical -->
+	<link rel="canonical" href="http://chiefy.github.io/2014/09/03/sails-generate-ember.html">
+	
+	<!-- RSS -->
+	<link rel="alternate" type="application/atom+xml" title="throw new Error("Chief");" href="http://chiefy.github.io/feed.xml" />
+	
+	<!-- Font Awesome -->
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+	
+	<!-- Google Fonts -->
+	<link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,700italic,400italic" rel="stylesheet" type="text/css">
+	
+	<!-- Google Analytics -->
+	
+</head>
 
-        <h1 class="post-title">Using Sails Generators To Integrate An ember-cli Project</h1>
 
-        <section class="post-content">
-            <p>Recently I have been trying to learn <a href="http://emberjs.com/">Ember</a> and I came across the amazing command line utility <a href="http://www.ember-cli.com/"><code>ember-cli</code></a> written by <a href="https://github.com/stefanpenner">Stefan Penner</a>. <code>ember-cli</code> is the missing utility belt for ember based projects. Among its features is a generator that creates a strongly opinionated project structure and build chain (<code>ember</code> is strongly opinionated - <a href="http://confy.wecode.io/talks/2013/arrrrcamp/ember-on-rails-convention-over-configuration-on-both-sides-of-the-tubes">convention over configuration</a>). <code>ember-cli</code> uses an <a href="http://esnext.github.io/es6-module-transpiler/">ES6 module transpiler</a> allowing users to use next-gen ES6 module support in their current projects today. It also utilizes <a href="https://github.com/broccolijs/broccoli"><code>broccoli</code></a> for build tooling as opposed to <code>grunt</code> which Sails seems to favor. More on that later.</p>
+  <body>
+    <header class="site-header">
+
+	<div class="branding">
+		
+		<a href="/">
+      <img class="avatar" src="/img/chief_is_dangerous.jpg" alt=""/>
+    </a>
+		
+		
+		<h1 class="site-title">
+			<a href="/">throw new Error("Chief");</a>
+		</h1>
+	</div>
+	
+	<nav class="site-nav">
+		<ul>
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+
+			<!-- Social icons from Font Awesome, if enabled -->
+			
+<li>
+	<a href="http://chiefy.github.io/feed.xml" title="Follow RSS feed">
+		<i class="fa fa-fw fa-rss"></i>
+	</a>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li>
+	<a href="https://github.com/chiefy" title="Follow on GitHub">
+		<i class="fa fa-fw fa-github"></i>
+	</a>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li>
+	<a href="https://tacosandtiaras.tumblr.com/" title="Follow on Tumblr">
+		<i class="fa fa-fw fa-tumblr"></i>
+	</a>
+</li>
+
+
+
+<li>
+	<a href="https://twitter.com/tehsuck" title="Follow on Twitter">
+		<i class="fa fa-fw fa-twitter"></i>
+	</a>
+</li>
+
+
+
+
+
+		</ul>
+	</nav>
+	
+</header>
+
+
+    <div class="content">
+      <article >
+
+  <header style="background-image: url('/')">
+    <h1 class="title">Using Sails Generators To Integrate An ember-cli Project</h1>
+    
+    <p class="meta">
+    September 3, 2014
+    
+    </p>
+  </header>
+
+  <section class="post-content">
+    <p>Recently I have been trying to learn <a href="http://emberjs.com/">Ember</a> and I came across the amazing command line utility <a href="http://www.ember-cli.com/"><code>ember-cli</code></a> written by <a href="https://github.com/stefanpenner">Stefan Penner</a>. <code>ember-cli</code> is the missing utility belt for ember based projects. Among its features is a generator that creates a strongly opinionated project structure and build chain (<code>ember</code> is strongly opinionated - <a href="http://confy.wecode.io/talks/2013/arrrrcamp/ember-on-rails-convention-over-configuration-on-both-sides-of-the-tubes">convention over configuration</a>). <code>ember-cli</code> uses an <a href="http://esnext.github.io/es6-module-transpiler/">ES6 module transpiler</a> allowing users to use next-gen ES6 module support in their current projects today. It also utilizes <a href="https://github.com/broccolijs/broccoli"><code>broccoli</code></a> for build tooling as opposed to <code>grunt</code> which Sails seems to favor. More on that later.</p>
 
 <p>Along with <code>ember-cli</code>, I ran across <a href="https://github.com/mphasize/sails-ember-blueprints"><code>sails-ember-blueprints</code></a> by <a href="https://github.com/mphasize">mphasize</a> which overrides some of Sails&#39; blueprint templates for compatibility with <a href="http://emberjs.com/api/data/">Ember-Data</a>&#39;s <code>RESTAdapter</code>.</p>
 
@@ -88,7 +196,7 @@
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span><span class="nb">cd </span>ember <span class="o">&amp;&amp;</span> ember serve</code></pre></div>
 
-<p><img src="/assets/images/welcome_to_ember.png" alt="Initial ember website"></p>
+<p><img src="/img/welcome_to_ember.png" alt="Initial ember website"></p>
 
 <h2>Lessons Learned or How I Learned To Stop Worrying and Love The <code>broccoli</code></h2>
 
@@ -108,75 +216,34 @@
 <a href="https://github.com/chiefy/sails-generate-new-ember" class="github-button" data-style="mega" data-icon="octicon-git-branch" > Fork </a>
 <a href="https://github.com/chiefy/" class="github-button" data-style="mega" data-icon="octicon-mark-github" data-count-href="/chiefy/followers" data-count-api="/users/chiefy#followers"> Follow chiefy </a></p>
 
-        </section>
+  </section>
+  
+</article>
 
-        
+<!-- Disqus -->
 
-        <footer class="post-footer">
-        	<!-- If we want to display author's name and bio -->
-            
-                <section class="author">
-                	<header> <a href=""> <img class="profile" src="/assets/images/chief_is_dangerous.jpg" alt="Author's an idiot."></a></header>
-                	<article>
-                		<!-- Author Name -->
-                    	<h4> Christopher "Chief" Najewicz </h4>
-                    	<!-- Author Bio -->
-                    	<p> 
-                    		My name is chief. I like to do the javascripts, and "web development." Feel free to follow my antics: <a href="http://twitter.com/tehsuck">@tehsuck</a>.
-                    	</p>
-                    </article>
-                </section>                
-            
+<div class="comments">
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+	var disqus_shortname = 'chiefy'; 
+	(function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
 
-            <section class="share">
-                <h4>Share this post</h4>
-                <a class="icon-twitter" href="http://twitter.com/share?text=Using Sails Generators To Integrate An ember-cli Project&amp;url=https://chiefy.github.io/2014/09/03/sails-generate-ember.html"
-                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
-                    <span class="hidden">Twitter</span>
-                </a>
-                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://chiefy.github.io/2014/09/03/sails-generate-ember.html"
-                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
-                    <span class="hidden">Facebook</span>
-                </a>
-                <a class="icon-google-plus" href="https://plus.google.com/share?url=https://chiefy.github.io/2014/09/03/sails-generate-ember.html"
-                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
-                    <span class="hidden">Google+</span>
-                </a>
-            </section>
-            
-            
-            <section class="disqus">
-            	<div id="disqus_thread"></div>
-            	<script type="text/javascript">
+    </div>
 
-            	    var disqus_shortname = 'chiefy'; 
-            		var disqus_developer = 0; // developer mode is on
-            	    (function() {
-            	        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-            	        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-            	        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-            	    })();
-            	</script>
-            	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-            	<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-            </section>
-            
-        	
-        </footer>
+    
 
-    </article>
+    <script type="text/javascript" src="/js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+    <script async defer id="github-bjs" src="//buttons.github.io/buttons.js"></script>
 
-</main>
+  </body>
 
-        <footer class="site-footer">
-            <a class="subscribe icon-feed" href="rss.xml"><span class="tooltip">Subscribe!</span></a>
-            <div class="inner">
-                <section class="copyright">All content copyright <a href="">throw new Error("Chief")</a> &copy;  &bull; All rights reserved.</section>
-            </div>
-        </footer>
-        <script type="text/javascript" src="/assets/js/jquery-1.10.2.min.js"></script>
-        <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
-        <script type="text/javascript" src="/assets/js/index.js"></script>
-        <script async defer id="github-bjs" src="//buttons.github.io/buttons.js"></script>
-    </body>
 </html>

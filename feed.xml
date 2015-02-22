@@ -1,13 +1,133 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>throw new Error(&quot;Chief&quot;)</title>
-    <description>I complain about JavaScript, Angular, Sails and other interwebs stuff</description>
-    <link>https://chiefy.github.io/</link>
-    <atom:link href="https://chiefy.github.io/feed.xml" rel="self" type="application/rss+xml" />
+    <title>throw new Error(&quot;Chief&quot;);</title>
+    <atom:link href="http://chiefy.github.io/feed.xml" rel="self" type="application/rss+xml"/>
+    <link>http://chiefy.github.io/</link>
+    <description>I complain about technology.</description>
+    <pubDate>Sun, 22 Feb 2015 16:23:08 -0500</pubDate>
+    
+      <item>
+        <title>Up &amp; Running With boot2docker, Fig and Packer on OSX</title>
+        <link>http://chiefy.github.io/2015/02/24/up-and-running-w-boot2docker-fig-packer.html</link>
+        <guid isPermaLink="true">http://chiefy.github.io/2015/02/24/up-and-running-w-boot2docker-fig-packer.html</guid>
+        <description>&lt;p&gt;Recently my job has been focusing a bit more on the devops side of things and I have been trying to learn and use docker via boot2docker on OSX. During the process I kept wishing that someone had written about some of the issues I was running into such that I could easily letmegooglethatforyou or SO the answers in a non day-killing manner. Please keep in mind that this stuff moves extremely fast (or slow depending on the project), so be sure to check out the issue links and check on the status before yelling at me that it&amp;#39;s already been fixed. &lt;/p&gt;
+
+&lt;h2&gt;boot2docker&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&quot;http://boot2docker.io/&quot;&gt;boot2docker&lt;/a&gt; is a lightweight Linux distribution based on Tiny Core Linux made specifically to run Docker containers. It runs completely from RAM, weighs ~27MB and boots in ~5s (YMMV).&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;In case you aren&amp;#39;t aware, or you&amp;#39;ve been living under a devops rock, &lt;a href=&quot;http://docker.io&quot;&gt;Docker&lt;/a&gt; is the new hotness in virtualization and container technology. I&amp;#39;m not going to get into it here, but there are a zillion posts around the interwebs describing what it is, and what it can help you accomplish for you. &lt;/p&gt;
+
+&lt;p&gt;Because Docker requires a specific Linux Kernel, &lt;a href=&quot;https://docs.docker.com/installation/mac/&quot;&gt;you can&amp;#39;t use Docker exclusively with Darwin/OSX&lt;/a&gt;, you must use a proxy VM to manage your Docker images and containers. This is where boot2docker comes in.&lt;/p&gt;
+
+&lt;p&gt;So instead of having to ssh into a VM and manage your Docker images and containers (potentially a pretty big PITA), boot2docker provides a proxy layer, so you can use docker commands in your local shell just as if you were the docker host. At the time of writing here are versions of these programs I was using:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;docker --version &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; boot2docker version &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; uname -a
+Docker version 1.5.0, build a8a31ef
+Boot2Docker-cli version: v1.5.0
+Git commit: ccd9032
+Darwin cnaje1ML1 13.4.0 Darwin Kernel Version 13.4.0: Wed Dec &lt;span class=&quot;m&quot;&gt;17&lt;/span&gt; 19:05:52 PST 2014&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; root:xnu-2422.115.10~1/RELEASE_X86_64 x86_64&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Along with this great convenience, comes more complexity, and with more complexity, comes various issues when trying to use Docker-dependent programs and utilities.&lt;/p&gt;
+
+&lt;h3&gt;Some Important &lt;code&gt;boot2docker&lt;/code&gt; Commands&lt;/h3&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;boot2docker init &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; boot2docker up&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;To get things started, you will need to create/init the boot2docker VM, and then actually start the instance.&lt;/p&gt;
+
+&lt;p&gt;See-also: &lt;code&gt;boot2docker save&lt;/code&gt;, &lt;code&gt;boot2docker down&lt;/code&gt;, &lt;code&gt;boot2docker restart&lt;/code&gt; etc. which will manage the state of your VM.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;boot2docker ip&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;When you use boot2docker, it spawns a new VM instance through VirtualBox. This new VM exposes it&amp;#39;s network interface, and if you will be creating any Docker containers which expose network services (you proabbly will), you need to know the VM&amp;#39;s IP address in order to interface with them. The &lt;code&gt;ip&lt;/code&gt; command, like it&amp;#39;s name implies, simply prints out the IP address assigned to the VM.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;boot2docker shellinit&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;To get your shell setup properly, you will need to run &lt;code&gt;shellinit&lt;/code&gt; at some point (obviously after you have &lt;code&gt;boot2docker up&lt;/code&gt;).&lt;/p&gt;
+
+&lt;p&gt;Depending on how your shell is setup, it might be handy to add this to your &lt;code&gt;.bashrc&lt;/code&gt; or &lt;code&gt;.zshrc&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/zsh&lt;/span&gt;
+...
+boot2docker shellinit &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;DOCKER_IP&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;boot2docker ip&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;
+...&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;Fig&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Fast, isolated development environments using Docker.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;When you are developing an application using docker containers, you are going to need something to help you orchestrate containers. There are plenty of great write-ups on using Fig, so I will not go into that here. Fig is a great orchestration toolset and was &lt;a href=&quot;http://venturebeat.com/2014/07/22/docker-buys-orchard-a-2-man-startup-with-a-cloud-service-for-running-docker-friendly-apps/&quot;&gt;recently purchased by Docker&lt;/a&gt;. &lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;fig --version
+fig 1.0.1&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h4&gt;Shared Data Volumes&lt;/h4&gt;
+
+&lt;p&gt;One of the first issues I ran into using fig and boot2docker was the issue of mounting writable shared volumes with the volumes_from config. The problem is that when boot2docker mounts volumes, it uses vboxfs, and causes several problems when the host container tries to write or change permissions to the shared volume. &lt;/p&gt;
+
+&lt;p&gt;If you are interested, there are various &lt;a href=&quot;https://github.com/docker/docker/issues/4023&quot;&gt;threads&lt;/a&gt; on &lt;a href=&quot;https://github.com/boot2docker/boot2docker/issues/587#issuecomment-66935011&quot;&gt;issues&lt;/a&gt; relating to boot2docker / vboxfs / shared volumes / permissions etc. It&amp;#39;s actually a lot to sort through, and I spent a few days trying to find a solution to the issue I was running into.&lt;/p&gt;
+
+&lt;p&gt;I ended up using GitHub user &lt;a href=&quot;https://github.com/paolomainardi&quot;&gt;@paolomainardi&lt;/a&gt;&amp;#39;s solution to nix using VirtualBox&amp;#39;s vboxfs and &lt;a href=&quot;https://github.com/boot2docker/boot2docker/issues/587#issuecomment-66935011&quot;&gt;instead expose folders via NFS&lt;/a&gt;. &lt;/p&gt;
+
+&lt;p&gt;First, modify &lt;code&gt;/etc/exports&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;/Users -mapall&lt;span class=&quot;o&quot;&gt;=[&lt;/span&gt;youruser&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;:&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;yourgroup&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;boot2dockerip&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;After you save, you  may or may not need to sudo /sbin/nfsd restart to restart the NFS daemon in OSX to pick up the changes.&lt;/p&gt;
+
+&lt;p&gt;Then &lt;code&gt;boot2docker ssh&lt;/code&gt; into your VM, and run the following:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;sudo umount /Users
+sudo /usr/local/etc/init.d/nfs-client start
+sudo mount 192.168.59.3:/Users /Users -o rw,async,noatime,rsize&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;32768,wsize&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;32768,proto&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;tcp&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now when you need your &lt;code&gt;Dockerfile&lt;/code&gt; to change permissions on files mounted via data volumes, it should take. This approach also helps another issue I ran into while running &lt;code&gt;packer&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3&gt;Dangling images, or, dockerberries&lt;/h3&gt;
+
+&lt;p&gt;One thing you&amp;#39;ll notice when you start working with Fig is that you will start generating a lot of intermediate images that for whatever reason, don&amp;#39;t get cleaned up by fig clean. I have a feeling that &lt;a href=&quot;https://github.com/docker/docker/issues/928&quot;&gt;the next release of docker will include a command to do this&lt;/a&gt;, but for now to remedy this, you can &lt;a href=&quot;https://www.calazan.com/docker-cleanup-commands/&quot;&gt;try this tip&lt;/a&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;docker rmi &lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;docker images -q -f &lt;span class=&quot;nv&quot;&gt;dangling&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;or to force cleanup:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;docker rmi -f &lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;docker images -q -f &lt;span class=&quot;nv&quot;&gt;dangling&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;even better add this to your aliases:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;alias &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;docker_clean_danglers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;docker rmi -f $(docker images -q -f dangling=true)&amp;quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;Packer&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&quot;http://packer.io&quot;&gt;Packer&lt;/a&gt; is a tool for creating identical machine images for multiple platforms from a single source configuration.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Packer is a great utility, from HashiCorp, the makers of &lt;a href=&quot;http://vagrantup.com&quot;&gt;Vagrant&lt;/a&gt;, to use configuration files to generate multiple images for different services such as: Amazon EC2, Docker and Vagrant. Need to generate an Amazon AMI, but also want a Docker image you can use elsewhere or push to a registry? Packer is the tool for the job.&lt;/p&gt;
+
+&lt;p&gt;I quickly ran into a weird issue running &lt;code&gt;packer build&lt;/code&gt; using a shell provisioner with &lt;code&gt;inline&lt;/code&gt;. My builder would start, and then mysteriously just sit there and hang when it tried to copy the script. As it turns out, part of the issue is because of &lt;a href=&quot;https://github.com/mitchellh/packer/issues/1752&quot;&gt;a bug using Packer with the latest version of Docker (1.4+)&lt;/a&gt;. I didn&amp;#39;t want to downgrade Docker to 1.3, so I &lt;a href=&quot;https://github.com/mariussturm/packer/commit/3a286ab6bdba7b8e5bf6a43c357a0ffeacd3dc97&quot;&gt;incorporated the fix&lt;/a&gt; locally, and re-built the packer binaries for OSX_x64. &lt;/p&gt;
+
+&lt;p&gt;As of this writing, Packer still hasn&amp;#39;t merged the patch, but you can &lt;a href=&quot;https://www.dropbox.com/s/4v5jvvxj1k5mpst/packer-osx-patched-0.7.5.zip?dl=1&quot;&gt;download my OSX binaries&lt;/a&gt; (install them to &lt;code&gt;/usr/local/bin&lt;/code&gt;), or &lt;a href=&quot;https://github.com/mitchellh/packer#developing-packer&quot;&gt;build them yourself&lt;/a&gt; if you want to get up and running with &lt;em&gt;Go&lt;/em&gt;. &lt;/p&gt;
+
+&lt;p&gt;The second issue is that packer stores it&amp;#39;s temporary files and folders into &lt;code&gt;/var/folders&lt;/code&gt; on OSX. You&amp;#39;ll note from my findings with Fig above, by default boot2docker mounts &lt;code&gt;/Users&lt;/code&gt;, and that&amp;#39;s it, so there is no way for Docker to get provisioned by anything Packer wants to send to it since the boot2docker VM can&amp;#39;t read &lt;code&gt;/var/folders&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;There are &lt;a href=&quot;https://github.com/mitchellh/packer/issues/398&quot;&gt;several&lt;/a&gt; &lt;a href=&quot;https://github.com/mitchellh/packer/issues/1888&quot;&gt;issues&lt;/a&gt; that have been reported around this, and it looks like most people solved it by setting their &lt;code&gt;TMPDIR&lt;/code&gt; environment variable to something inside their &lt;code&gt;/Users&lt;/code&gt; folder, like: &lt;code&gt;/Users/myuser/tmp&lt;/code&gt; since that folder gets mounted in the boot2docker VM. &lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ TMPDIR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/Users/chief/tmp packer build mybuild.json&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+</description>
+        <pubDate>Tue, 24 Feb 2015 07:00:00 -0500</pubDate>
+      </item>
     
       <item>
         <title>Using Sails Generators To Integrate An ember-cli Project</title>
+        <link>http://chiefy.github.io/2014/09/03/sails-generate-ember.html</link>
+        <guid isPermaLink="true">http://chiefy.github.io/2014/09/03/sails-generate-ember.html</guid>
         <description>&lt;p&gt;Recently I have been trying to learn &lt;a href=&quot;http://emberjs.com/&quot;&gt;Ember&lt;/a&gt; and I came across the amazing command line utility &lt;a href=&quot;http://www.ember-cli.com/&quot;&gt;&lt;code&gt;ember-cli&lt;/code&gt;&lt;/a&gt; written by &lt;a href=&quot;https://github.com/stefanpenner&quot;&gt;Stefan Penner&lt;/a&gt;. &lt;code&gt;ember-cli&lt;/code&gt; is the missing utility belt for ember based projects. Among its features is a generator that creates a strongly opinionated project structure and build chain (&lt;code&gt;ember&lt;/code&gt; is strongly opinionated - &lt;a href=&quot;http://confy.wecode.io/talks/2013/arrrrcamp/ember-on-rails-convention-over-configuration-on-both-sides-of-the-tubes&quot;&gt;convention over configuration&lt;/a&gt;). &lt;code&gt;ember-cli&lt;/code&gt; uses an &lt;a href=&quot;http://esnext.github.io/es6-module-transpiler/&quot;&gt;ES6 module transpiler&lt;/a&gt; allowing users to use next-gen ES6 module support in their current projects today. It also utilizes &lt;a href=&quot;https://github.com/broccolijs/broccoli&quot;&gt;&lt;code&gt;broccoli&lt;/code&gt;&lt;/a&gt; for build tooling as opposed to &lt;code&gt;grunt&lt;/code&gt; which Sails seems to favor. More on that later.&lt;/p&gt;
 
 &lt;p&gt;Along with &lt;code&gt;ember-cli&lt;/code&gt;, I ran across &lt;a href=&quot;https://github.com/mphasize/sails-ember-blueprints&quot;&gt;&lt;code&gt;sails-ember-blueprints&lt;/code&gt;&lt;/a&gt; by &lt;a href=&quot;https://github.com/mphasize&quot;&gt;mphasize&lt;/a&gt; which overrides some of Sails&amp;#39; blueprint templates for compatibility with &lt;a href=&quot;http://emberjs.com/api/data/&quot;&gt;Ember-Data&lt;/a&gt;&amp;#39;s &lt;code&gt;RESTAdapter&lt;/code&gt;.&lt;/p&gt;
@@ -60,7 +180,7 @@
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;ember &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; ember serve&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/images/welcome_to_ember.png&quot; alt=&quot;Initial ember website&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/img/welcome_to_ember.png&quot; alt=&quot;Initial ember website&quot;&gt;&lt;/p&gt;
 
 &lt;h2&gt;Lessons Learned or How I Learned To Stop Worrying and Love The &lt;code&gt;broccoli&lt;/code&gt;&lt;/h2&gt;
 
@@ -81,12 +201,12 @@
 &lt;a href=&quot;https://github.com/chiefy/&quot; class=&quot;github-button&quot; data-style=&quot;mega&quot; data-icon=&quot;octicon-mark-github&quot; data-count-href=&quot;/chiefy/followers&quot; data-count-api=&quot;/users/chiefy#followers&quot;&gt; Follow chiefy &lt;/a&gt;&lt;/p&gt;
 </description>
         <pubDate>Wed, 03 Sep 2014 14:00:00 -0400</pubDate>
-        <link>https://chiefy.github.io/2014/09/03/sails-generate-ember.html</link>
-        <guid isPermaLink="true">https://chiefy.github.io/2014/09/03/sails-generate-ember.html</guid>
       </item>
     
       <item>
         <title>Using SQLite and Sequelize with ActionHero</title>
+        <link>http://chiefy.github.io/2014/07/13/using-sqlite-sequelize-with-actionhero.html</link>
+        <guid isPermaLink="true">http://chiefy.github.io/2014/07/13/using-sqlite-sequelize-with-actionhero.html</guid>
         <description>&lt;p&gt;This past weekend I was checking out &lt;a href=&quot;http://actionherojs.com/&quot;&gt;ActionHero&lt;/a&gt;, a pretty nice API framework written in Node.js which claims to be: &amp;quot;Reusable, Scalable, and Quick!&amp;quot; I was setting up a quick example and I didn&amp;#39;t want to have to connect to a MySQL or Postgres DB. ActionHero comes with &lt;code&gt;fakeredis&lt;/code&gt;, an in-memory pseudo-redis store, which is great for experimenting but I wanted to use a local disk store. A few google searches didn&amp;#39;t turn up too much on how to use SQLite with ActionHero, so here we go.&lt;/p&gt;
 
 &lt;h3&gt;pre-req&amp;#39;s:&lt;/h3&gt;
@@ -318,11 +438,11 @@ info:  - wrote file &lt;span class=&quot;s1&quot;&gt;&amp;#39;C:\Users\cnajewicz
 
 &lt;p&gt;After saving &lt;code&gt;actions/meat.js&lt;/code&gt;, start ActionHero up again by issuing &lt;code&gt;npm start&lt;/code&gt;. Using a utility (I used POSTman, you can use cURL etc.), send a &lt;code&gt;POST&lt;/code&gt; to &lt;code&gt;http://localhost:8080/api/meatAdd&lt;/code&gt; and add some meat!&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/images/postman_actionhero.jpg&quot; alt=&quot;POSTMan Example&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/img/postman_actionhero.jpg&quot; alt=&quot;POSTMan Example&quot;&gt;&lt;/p&gt;
 
 &lt;p&gt;Open up your favorite SQLite GUI and verify the record was stored:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/images/sqlite_browser.jpg&quot; alt=&quot;Our Meat Exists&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/img/sqlite_browser.jpg&quot; alt=&quot;Our Meat Exists&quot;&gt;&lt;/p&gt;
 
 &lt;p&gt;Up next, we&amp;#39;ll create an &lt;a href=&quot;http://emberjs.com&quot;&gt;EmberJS&lt;/a&gt; based UI for our meat app.&lt;/p&gt;
 
@@ -330,12 +450,12 @@ info:  - wrote file &lt;span class=&quot;s1&quot;&gt;&amp;#39;C:\Users\cnajewicz
 I&amp;#39;ve included the source for this project on &lt;a href=&quot;https://github.com/chiefy/sqlite-sequelize-actionhero-demo&quot;&gt;GitHub&lt;/a&gt;. &lt;/p&gt;
 </description>
         <pubDate>Sun, 13 Jul 2014 12:59:27 -0400</pubDate>
-        <link>https://chiefy.github.io/2014/07/13/using-sqlite-sequelize-with-actionhero.html</link>
-        <guid isPermaLink="true">https://chiefy.github.io/2014/07/13/using-sqlite-sequelize-with-actionhero.html</guid>
       </item>
     
       <item>
         <title>Easily create Angular-based frontend scaffolding for Sails</title>
+        <link>http://chiefy.github.io/2014/06/24/using-sails-generate-frontend-angular.html</link>
+        <guid isPermaLink="true">http://chiefy.github.io/2014/06/24/using-sails-generate-frontend-angular.html</guid>
         <description>&lt;p&gt;SailsJS 0.10 introduces the concept of generators, a layer to allow users to create their own templates around the various pieces of a SailsJS project. One of the generators, sails-generate-frontend will generate all your front-end assets. I have created sails-generate-frontend-angular, a generator to override the default frontend generator and create a simple scaffold for an Angular frontend.&lt;/p&gt;
 
 &lt;p&gt;The first thing you will need to do is make sure to install Sails release-candidate 0.10.x.&lt;/p&gt;
@@ -362,7 +482,7 @@ I&amp;#39;ve included the source for this project on &lt;a href=&quot;https://gi
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;sails new ngSailsApp &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;ngSailsApp &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; sails lift&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/images/sails-generate-frontend-angular/new_app_screenshot.jpg&quot; alt=&quot;Screenshot&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/img/sails-generate-frontend-angular/new_app_screenshot.jpg&quot; alt=&quot;Screenshot&quot;&gt;&lt;/p&gt;
 
 &lt;p&gt;Exit your Sails app with &lt;code&gt;ctrl-c&lt;/code&gt;. Now generate an api. For this example, we&amp;#39;ll generate an api around a movie class.&lt;/p&gt;
 
@@ -387,7 +507,7 @@ info: and will be available the next &lt;span class=&quot;nb&quot;&gt;time &lt;/
 
 &lt;p&gt;Once again, fire up the Sails app with &lt;code&gt;sails lift&lt;/code&gt;, and open a browser to &lt;code&gt;http://localhost:1337/#/movies&lt;/code&gt;. Here you will see a very, very, very unstyled, basic CRUD scaffold built with &lt;a href=&quot;http://sailsjs.org/&quot;&gt;Sails&lt;/a&gt;, &lt;a href=&quot;https://angularjs.org/&quot;&gt;Angular&lt;/a&gt;, &lt;a href=&quot;https://github.com/mgonto/restangular/&quot;&gt;RESTAngular&lt;/a&gt;, and &lt;a href=&quot;http://angular-ui.github.io/ui-router/site/#/api/ui.router&quot;&gt;ui-router&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/images/sails-generate-frontend-angular/new_movie_crud.gif&quot; alt=&quot;CRUD Movie Example&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/img/sails-generate-frontend-angular/new_movie_crud.gif&quot; alt=&quot;CRUD Movie Example&quot;&gt;&lt;/p&gt;
 
 &lt;p&gt;Please feel free to check out the &lt;a href=&quot;https://github.com/chiefy/sails-generate-frontend-angular&quot;&gt;code on github&lt;/a&gt; and make any suggestions you feel would improve the project.&lt;/p&gt;
 
@@ -396,12 +516,12 @@ info: and will be available the next &lt;span class=&quot;nb&quot;&gt;time &lt;/
 &lt;a href=&quot;https://github.com/chiefy/sails-generate-frontend-angular&quot; class=&quot;github-button&quot; data-style=&quot;mega&quot; data-icon=&quot;octicon-git-branch&quot; &gt; Fork &lt;/a&gt;&lt;/p&gt;
 </description>
         <pubDate>Tue, 24 Jun 2014 01:00:00 -0400</pubDate>
-        <link>https://chiefy.github.io/2014/06/24/using-sails-generate-frontend-angular.html</link>
-        <guid isPermaLink="true">https://chiefy.github.io/2014/06/24/using-sails-generate-frontend-angular.html</guid>
       </item>
     
       <item>
         <title>Using generators in SailsJS 0.10.x</title>
+        <link>http://chiefy.github.io/2014/04/13/using-generators-in-sailsjs-010.html</link>
+        <guid isPermaLink="true">http://chiefy.github.io/2014/04/13/using-generators-in-sailsjs-010.html</guid>
         <description>&lt;p&gt;Sails&amp;#39; new &lt;a href=&quot;https://github.com/balderdashy/sails/tree/v0.10.0-rc5&quot;&gt;release candidate&lt;/a&gt; is a pretty big shift from the 0.9 version, and in a good way.&lt;/p&gt;
 
 &lt;h2&gt;What is a generator?&lt;/h2&gt;
@@ -469,8 +589,6 @@ Now if you open up your &lt;code&gt;api/models&lt;/code&gt; folder, you should s
 &lt;p&gt;&lt;code&gt;npm search sails-generate&lt;/code&gt; is a good way to see what has been created so far. &lt;/p&gt;
 </description>
         <pubDate>Sun, 13 Apr 2014 12:59:27 -0400</pubDate>
-        <link>https://chiefy.github.io/2014/04/13/using-generators-in-sailsjs-010.html</link>
-        <guid isPermaLink="true">https://chiefy.github.io/2014/04/13/using-generators-in-sailsjs-010.html</guid>
       </item>
     
   </channel>
