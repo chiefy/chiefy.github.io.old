@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Up & Running With boot2docker, Fig and Packer on OSX
+title: Up & Running With boot2docker, Fig (now docker-compose) and Packer on OSX
 date: 2015-02-24 12:00:00
 tags: 
   - docker
@@ -18,7 +18,7 @@ Recently my job has been focusing a bit more on the devops side of things and I 
 
 > [boot2docker](http://boot2docker.io/) is a lightweight Linux distribution based on Tiny Core Linux made specifically to run Docker containers. It runs completely from RAM, weighs ~27MB and boots in ~5s (YMMV).
 
-In case you aren't aware, or you've been living under a devops rock, [Docker](http://docker.io) is the new hotness in virtualization and container technology. I'm not going to get into it here, but there are a zillion posts around the interwebs describing what it is, and what it can help you accomplish for you. 
+In case you aren't aware, or you've been living under a devops rock, [Docker](http://docker.io) is the new hotness in virtualization and container technology. I'm not going to get into it here, but there are a zillion posts around the interwebs describing what it is, and what it can help you accomplish. 
 
 Because Docker requires a specific Linux Kernel, [you can't use Docker exclusively with Darwin/OSX](https://docs.docker.com/installation/mac/), you must use a proxy VM to manage your Docker images and containers. This is where boot2docker comes in.
 
@@ -65,11 +65,11 @@ boot2docker shellinit && export DOCKER_IP=$(boot2docker ip)
 ...
 {% endhighlight %}
 
-## Fig
+## Fig (or *docker-compose*)
 
 > Fast, isolated development environments using Docker.
 
-When you are developing an application using docker containers, you are going to need something to help you orchestrate containers. There are plenty of great write-ups on using Fig, so I will not go into that here. Fig is a great orchestration toolset and was [recently purchased by Docker](http://venturebeat.com/2014/07/22/docker-buys-orchard-a-2-man-startup-with-a-cloud-service-for-running-docker-friendly-apps/). 
+When you are developing an application using docker containers, you are going to need something to help you orchestrate containers. There are plenty of great write-ups on using Fig, so I will not go into that here. Fig (or `docker-compose`) is a great orchestration toolset and was [recently purchased by Docker](http://venturebeat.com/2014/07/22/docker-buys-orchard-a-2-man-startup-with-a-cloud-service-for-running-docker-friendly-apps/). Funny story: since I wrote this about a week ago, it's now known as `docker-compose`. 
 
 {% highlight bash %}
 $ fig --version
